@@ -33,8 +33,10 @@ namespace A05
 
         private void createProtocol()
         {
-            protocol.AppendLine(command + " " + userName + " " + password);
-         
+            protocol = new StringBuilder();
+            protocol.Append(command);
+            protocol.Append(userName);
+            protocol.Append(password);  
         }
     }
 }
