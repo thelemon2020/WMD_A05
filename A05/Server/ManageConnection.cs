@@ -30,7 +30,8 @@ namespace Server
 
         public void HandleClient(TcpClient client, ConnectRepo repo)
         {
-
+            Command clientCommand = new Command();
+            clientCommand.Receive();
             return;
         }
     }
