@@ -10,11 +10,10 @@ namespace Server
 {
     public class ManageConnection
     {
-        private ConnectRepo repo;
-
-        public ManageConnection()
+        ConnectRepo repo;
+        public ManageConnection(ConnectRepo cr)
         {
-            repo = new ConnectRepo();
+            repo = cr;
         }
 
         public void Connect(TcpListener listener)

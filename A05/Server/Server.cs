@@ -13,16 +13,18 @@ namespace Server
     {
         const int kDefaultPort = 23000;
         public ManageConnection manager;
+        public ConnectRepo repo;
 
         static void Main(string[] args)
         {
-
+            Server myServer = new Server();
         }
 
 
         public Server()
         {
-            manager = new ManageConnection();
+            repo = new ConnectRepo();
+            manager = new ManageConnection(repo);
             TcpListener listener = new TcpListener(IPAddress.Any, kDefaultPort);
             listener.Start();
             startServer(listener);
@@ -42,6 +44,7 @@ namespace Server
                 }
 
                 manager.Connect(listener);
+                Console.WriteLine("Connected!");
             }
         }
     }
