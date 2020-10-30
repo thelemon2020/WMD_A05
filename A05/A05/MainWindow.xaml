@@ -4,25 +4,32 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:A05"
+        xmlns:A05="clr-namespace:A05"
         mc:Ignorable="d"
         Title="Chat Client" Height="450" Width="800">
-
-    <DockPanel>
+    <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <MenuItem Header="Connect To Server" Click="Connect_Click"></MenuItem>
-                <MenuItem Header="Shut Down Server"></MenuItem>
+                <MenuItem Header="Disconnect From Server" Name="MenuDisconnect" IsEnabled="False" Click="disconnectFromServer"></MenuItem>
+                <MenuItem Header="Shut Down Server" IsEnabled="false"></MenuItem>
                 <MenuItem Header="Close"></MenuItem>
             </MenuItem>
             <MenuItem Header="Options"></MenuItem>
         </Menu>
-        <TextBox Name ="userInput" DockPanel.Dock="Bottom"></TextBox>
-        <Border BorderBrush="Black" BorderThickness="2">
-            <TextBlock x:Name="userList" Background="DarkGray" DockPanel.Dock="Left" Width="80"><InlineUIContainer>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Margin="0,0,0,0">
+            <TextBox Name ="userInput" DockPanel.Dock="Bottom" Height="40" Width="725" Margin="0,0,0,0" FontSize="20" IsEnabled="False"></TextBox>
+            <Button Content="Submit" Name="SubmitMessage" Padding="10" Width="70" Click="Submit" IsEnabled="False"></Button>
+        </StackPanel>
+        
+        <Border BorderBrush="Black" BorderThickness="2" >
+            <TextBlock x:Name="userList" Background="DarkGray" DockPanel.Dock="Left" Width="80" Margin="0,-0.286,0,-1.857"><InlineUIContainer>
                     <Border BorderBrush="Black" BorderThickness="1"><TextBlock Width="80" Height="25" Background="DarkGray" TextDecorations="Underline" TextAlignment="Center">User List</TextBlock></Border>
                 </InlineUIContainer></TextBlock>
         </Border>
-        <TextBlock Name ="chatWindow" DockPanel.Dock="Bottom">Hello</TextBlock>
+        <Border BorderBrush="Black" BorderThickness="2">
+            <TextBlock Name ="chatWindow" DockPanel.Dock="Bottom" Height="352" Margin="0.429,0,0.286,0"></TextBlock>
+        </Border>
 
     </DockPanel>
 </Window>

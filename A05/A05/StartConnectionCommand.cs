@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace A05
@@ -12,13 +13,14 @@ namespace A05
         public string userName { get; set; }
         public byte[] password { get; set; }
 
-        public StartConnectionCommand(connection newConnection)
+        public StartConnectionCommand(connection newConnection, Mutex toWrite)
         {
             password = hashPassword(newConnection.userPassword);
             userName = newConnection.username;
             serverIP = newConnection.ipAddress;
             serverPort = newConnection.serverPort;
             command = "CONNECT";
+            waitToWrite = toWrite;
             createProtocol();
         }
         private byte[] hashPassword(string password)

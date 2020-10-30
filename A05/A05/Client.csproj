@@ -55,12 +55,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AckCommand.cs" />
+    <Compile Include="InteractWithServer.cs" />
+    <Compile Include="SendMessageCommand.cs" />
     <Compile Include="StartConnectionCommand.cs" />
     <Compile Include="connection.cs" />
     <Compile Include="ConnectWindow.xaml.cs">
       <DependentUpon>ConnectWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Message.cs" />
     <Page Include="ConnectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
