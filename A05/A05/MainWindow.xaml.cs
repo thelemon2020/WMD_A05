@@ -33,7 +33,7 @@ namespace A05
             
             ConnectWindow newConnection = new ConnectWindow();
             newConnection.Owner = this;
-            newConnection.Show();
+            newConnection.ShowDialog();
             currentConnection = new connection(newConnection.Name, newConnection.userPassword, 
                 newConnection.ipAddress, newConnection.port);
             if (currentConnection !=null)

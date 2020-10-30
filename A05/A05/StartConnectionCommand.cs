@@ -33,6 +33,7 @@ namespace A05
 
         private void createProtocol()
         {
+
             protocol.AppendLine(command + " " + userName + " " + password);
          
         }

@@ -36,6 +36,7 @@ namespace A05
             ipAddress = IP.Text;
             int.TryParse(Port.Text, out tempPort);
             port = tempPort;
+            this.Close();
         }
     }
 }

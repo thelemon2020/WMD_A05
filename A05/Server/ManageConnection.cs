@@ -31,7 +31,8 @@ namespace Server
         public void HandleClient(TcpClient client, ConnectRepo repo)
         {
             Command clientCommand = new Command();
-            clientCommand.Receive();
+            string message = clientCommand.Receive();
+            Console.WriteLine(message);
             return;
         }
     }
