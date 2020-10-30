@@ -5,8 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:A05"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <DockPanel />
-    </Grid>
+        Title="Chat Client" Height="450" Width="800">
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Connect To Server" Click="Connect_Click"></MenuItem>
+                <MenuItem Header="Shut Down Server"></MenuItem>
+                <MenuItem Header="Close"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Options"></MenuItem>
+        </Menu>
+        <TextBox Name ="userInput" DockPanel.Dock="Bottom"></TextBox>
+        <Border BorderBrush="Black" BorderThickness="2">
+            <TextBlock x:Name="userList" Background="DarkGray" DockPanel.Dock="Left" Width="80"><InlineUIContainer>
+                    <Border BorderBrush="Black" BorderThickness="1"><TextBlock Width="80" Height="25" Background="DarkGray" TextDecorations="Underline" TextAlignment="Center">User List</TextBlock></Border>
+                </InlineUIContainer></TextBlock>
+        </Border>
+        <TextBlock Name ="chatWindow" DockPanel.Dock="Bottom">Hello</TextBlock>
+
+    </DockPanel>
 </Window>
