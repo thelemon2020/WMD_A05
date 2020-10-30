@@ -44,7 +44,6 @@ namespace Server
                 }
 
                 manager.Connect(listener);
-                Console.WriteLine("Connected!");
             }
         }
     }

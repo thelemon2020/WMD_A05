@@ -19,6 +19,7 @@ namespace Server
         public void Connect(TcpListener listener)
         {
             TcpClient client = listener.AcceptTcpClient();
+            Console.WriteLine("Connected!");
             Thread clientThread = new Thread(() => HandleClient(client, repo));
             clientThread.Start();
         }
@@ -31,6 +32,7 @@ namespace Server
         public void HandleClient(TcpClient client, ConnectRepo repo)
         {
             Command clientCommand = new Command();
+            clientCommand.Client = client;
             string message = clientCommand.Receive();
             Console.WriteLine(message);
             return;
