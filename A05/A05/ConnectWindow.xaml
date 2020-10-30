@@ -26,7 +26,7 @@
         <Label Grid.Row="0" Grid.Column="0" Content="User Name:" FontSize="24" HorizontalAlignment="Center"></Label>
         <TextBox Grid.Row="0" Grid.Column="1" Background="Gray" Height="20" Width="200" Name="userName"></TextBox>
         <Label Grid.Row="1" Grid.Column="0" Content="Password:" FontSize="24" HorizontalAlignment="Center"></Label>
-        <TextBox Grid.Row="1" Grid.Column="1" Background="Gray" Height="20" Width="200" Name="password"></TextBox>
+        <PasswordBox Grid.Row="1" Grid.Column="1" Background="Gray" Height="20" Width="200" Name="password"></PasswordBox>
         <Label Grid.Row="2" Grid.Column="0" Content="IP Address:" FontSize="24" HorizontalAlignment="Center"></Label>
         <TextBox Grid.Row="2" Grid.Column="1" Background="Gray" Height="20" Width="200" Name="IP"></TextBox>
         <Label Grid.Row="3" Grid.Column="0" Content="Port:" FontSize="24" HorizontalAlignment="Center"></Label>

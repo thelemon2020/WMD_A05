@@ -37,8 +37,12 @@ namespace A05
         {
             protocol = new StringBuilder();
             protocol.Append(command);
+            protocol.Append(',');
             protocol.Append(userName);
-            protocol.Append(password);  
+            protocol.Append(',');
+            protocol.Append(password);
+            protocol.Append(',');
+            protocol.Append("<EOF>");
         }
     }
 }
