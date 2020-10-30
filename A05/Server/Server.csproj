@@ -44,10 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
-    <Compile Include="connection.cs" />
+    <Compile Include="Connection.cs" />
     <Compile Include="ConnectRepo.cs" />
     <Compile Include="ManageConnection.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

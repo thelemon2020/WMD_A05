@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace A05
+namespace Server
 {
-    class Command
+    public class Command
     {
+        public string Name { get; set; }
+        public TcpClient Client { get; set; }
+
+
     }
 }
