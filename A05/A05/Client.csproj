@@ -56,6 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AckCommand.cs" />
+    <Compile Include="DisconnectCommand.cs" />
     <Compile Include="InteractWithServer.cs" />
     <Compile Include="SendMessageCommand.cs" />
     <Compile Include="StartConnectionCommand.cs" />

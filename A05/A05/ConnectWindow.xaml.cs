@@ -32,7 +32,7 @@ namespace A05
         {
             int tempPort = 0;
             username = userName.Text;
-            userPassword = password.Text;
+            userPassword = password.Password;
             ipAddress = IP.Text;
             int.TryParse(Port.Text, out tempPort);
             port = tempPort;

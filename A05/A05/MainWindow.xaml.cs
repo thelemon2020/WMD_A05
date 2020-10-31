@@ -114,6 +114,8 @@ namespace A05
         }
         private void disconnectFromServer(object sender, RoutedEventArgs e)
         {
+            DisconnectCommand disconnect = new DisconnectCommand(currentConnection, canWrite);
+            disconnect.ExecuteCommand();
             shutDownServer();
         }
         public void shutDownServer()
