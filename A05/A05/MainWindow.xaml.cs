@@ -60,7 +60,7 @@ namespace A05
                     ParameterizedThreadStart listenStartThread = new ParameterizedThreadStart(listenForMessage);
                     Thread listenThread = new Thread(listenStartThread);
                     object[] paramObj = new object[2];
-                    listenThread.Start(currentConnection.ipAddress);
+                    listenThread.Start(currentConnection);
                 }
                 else
                 {

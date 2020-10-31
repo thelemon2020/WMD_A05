@@ -11,6 +11,9 @@ namespace Server
     public class ManageConnection
     {
         ConnectRepo repo;
+        
+
+
         public ManageConnection(ConnectRepo cr)
         {
             repo = cr;
@@ -19,32 +22,40 @@ namespace Server
         public void Connect(TcpListener listener)
         {
             TcpClient client = listener.AcceptTcpClient(); // Accept a new client
-            Console.WriteLine("Connected!");
             Thread clientThread = new Thread(() => HandleClient(client, repo)); // Create a delegate for the client thread to run on
             clientThread.Start();
         }
 
-        public void HandleClient(TcpClient client, ConnectRepo repo)
+        private void HandleClient(TcpClient client, ConnectRepo repo)
         {
-            Command clientCommand = new Command(); // start a new command class for every new client
-            clientCommand.Client = client;
-            string message = clientCommand.Parse(clientCommand.Receive(), repo); // Grab an incoming message
-            clientCommand.Send(message); // send back an acknowledgement of receiving ok
+            string recMsg, ackMsg, sendMsg, tmpMsg;
+            Connection clientConnection = new Connection(client, repo); // create a new connection class for each client thread
+            NetworkStream stream = client.GetStream(); // Open the network stream to the current client thread.
 
-            if(!repo.CheckExists(clientCommand.Name)) // if the client is not represented in the repo, it's a new connection
+            recMsg = clientConnection.Receive(stream); // get the communication from the client
+            tmpMsg = clientConnection.Parse(recMsg);
+
+            if(tmpMsg.StartsWith("ACK,OK")) // The acknowledgement message is only returned with new connection
             {
-                repo.Add(clientCommand.Name, client); // add the client name and info to the repo
+                ackMsg = tmpMsg;
+                clientConnection.Send(ackMsg, stream); // send acknowledgement of first connection
+                stream.Close();
             }
-
-            foreach(KeyValuePair<string, TcpClient> entry in repo.repo) // send the message received to all connected clients
+            else if(tmpMsg.StartsWith("REPLY")) // If the message was sent from a client to chat it will be sent out as reply
             {
-                if (entry.Key != clientCommand.Name) // don't send the message to the one who actually sent the message first
+                sendMsg = tmpMsg;
+                clientConnection.Send(clientConnection.AckMsg, stream); // send the acknowledgement that the message was received
+                foreach(KeyValuePair<string, TcpClient> entry in repo.repo) // send message to all other clients
                 {
-                    clientCommand.Send(repo.GetMsg());
+                    if (entry.Key != clientConnection.Name) // don't send the message to the sender
+                    {
+                        NetworkStream tmpStream = entry.Value.GetStream();
+                        clientConnection.Send(sendMsg, tmpStream);
+                        tmpStream.Close();
+                    }
+
                 }
             }
-
-
         }
     }
 }
