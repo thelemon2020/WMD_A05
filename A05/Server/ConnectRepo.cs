@@ -6,34 +6,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
+using System.Net;
 
 namespace Server
 {
     public class ConnectRepo
     {
-        public ConcurrentDictionary<string, TcpClient> repo;
-        private ConcurrentQueue<string> msgQueue;
+        public ConcurrentDictionary<string, IPAddress> repo;
+        public ConcurrentQueue<string> msgQueue;
 
         public ConnectRepo()
         {
-            repo = new ConcurrentDictionary<string, TcpClient>();
+            repo = new ConcurrentDictionary<string, IPAddress>();
             msgQueue = new ConcurrentQueue<string>();
         }
 
-        public void Add(string key, TcpClient client)
+        public void Add(string key, IPAddress ip)
         {
-            repo.TryAdd(key, client);
+            repo.TryAdd(key, ip);
         }
 
 
         public void Remove(string key)
         {
-            repo.TryRemove(key, out TcpClient client);
+            repo.TryRemove(key, out IPAddress ip);
         }
 
         public bool CheckExists(string key)
         {
-            if(repo.TryGetValue(key, out TcpClient tmpClient)) { return true; }
+            if(repo.TryGetValue(key, out IPAddress ip)) { return true; }
             else { return false; }
         }
 

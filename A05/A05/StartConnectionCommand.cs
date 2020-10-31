@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -12,8 +13,9 @@ namespace A05
     {
         public string userName { get; set; }
         public byte[] password { get; set; }
+        public IPAddress ipAddress { get; set; }
 
-        public StartConnectionCommand(connection newConnection, Mutex toWrite)
+        public StartConnectionCommand(connection newConnection, Mutex toWrite, IPAddress ip)
         {
             password = hashPassword(newConnection.userPassword);
             userName = newConnection.username;
@@ -21,6 +23,7 @@ namespace A05
             serverPort = newConnection.serverPort;
             command = "CONNECT";
             waitToWrite = toWrite;
+            ipAddress = ip;
             createProtocol();
         }
         private byte[] hashPassword(string password)
@@ -37,6 +40,8 @@ namespace A05
         {
             protocol = new StringBuilder();
             protocol.Append(command);
+            protocol.Append(',');
+            protocol.Append(ipAddress); // added this in for the IP when doing the initial connect
             protocol.Append(',');
             protocol.Append(userName);
             protocol.Append(',');

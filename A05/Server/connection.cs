@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,16 +13,15 @@ namespace Server
         private const int kOK = 1;
         private const int kFail = 0;
         public string Name { get; set; }
-        public TcpClient Client { get; set; }
+        public IPAddress IP { get; set; }
         public string AckMsg { get; set; }
         public string ReplyMsg { get; set; }
         public string Password { private get; set; }
 
         ConnectRepo repo;
 
-        public Connection(TcpClient client, ConnectRepo cr)
+        public Connection(ConnectRepo cr)
         {
-            Client = client;
             repo = cr;
         }
 
@@ -56,10 +56,11 @@ namespace Server
             {
                 // delegate the AckCommand
                 AckCommand ackOK = new AckCommand();
-                Name = splitMsg[1]; // get the name from the incoming connect message
-                Password = splitMsg[2]; // NEED TO ADD PASSWORD TO FILE
+                IP = IPAddress.Parse(splitMsg[1]); // parse the IP address of the client 
+                Name = splitMsg[2]; // get the name from the incoming connect message
+                Password = splitMsg[3]; // NEED TO ADD PASSWORD TO FILE
                 AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
-                repo.Add(Name, Client); // Add the new client into the repo
+                repo.Add(Name, IP); // Add the new client into the repo
                 return AckMsg;
             }
             else if(splitMsg[0] == "SEND")
@@ -73,6 +74,10 @@ namespace Server
                 ReplyMsg = reply.BuildProtocol(Name, tmpMsg); // build the reply
                 repo.AddMsg(ReplyMsg); // Add the message that came in to the queue to be sent
                 return ReplyMsg;
+            }
+            else if(splitMsg[0] == "ACK")
+            {
+                return "OK";
             }
             else
             {

@@ -46,7 +46,7 @@ namespace A05
                 newConnection.ipAddress, newConnection.port, canWrite);
             if (currentConnection != null)
             {
-                StartConnectionCommand startUp = new StartConnectionCommand(currentConnection, canWrite);
+                StartConnectionCommand startUp = new StartConnectionCommand(currentConnection, canWrite, currentConnection.ipAddress);
                 string serverResponse = startUp.ExecuteCommand();
                 if (serverResponse != "")
                 {
