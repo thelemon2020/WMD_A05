@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Connection
+    public class Connection
     {
         private const int kOK = 1;
         private const int kFail = 0;
@@ -32,6 +32,7 @@ namespace Server
             stream.Write(msgBytes, 0, msgBytes.Length);
             stream.Flush();
         }
+        
 
         public string Receive(NetworkStream stream)
         {
@@ -47,7 +48,8 @@ namespace Server
             return msgRec;
         }
 
-        public string Parse(string recMsg)
+
+        public string Parse(string recMsg, Connection c)
         {
             //Delegate which resulting command is necessary
             string[] splitMsg = recMsg.Split(',');
@@ -60,7 +62,7 @@ namespace Server
                 Name = splitMsg[2]; // get the name from the incoming connect message
                 Password = splitMsg[3]; // NEED TO ADD PASSWORD TO FILE
                 AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
-                repo.Add(Name, IP); // Add the new client into the repo
+                repo.Add(Name, c); // Add the new client into the repo
                 return AckMsg;
             }
             else if(splitMsg[0] == "SEND")

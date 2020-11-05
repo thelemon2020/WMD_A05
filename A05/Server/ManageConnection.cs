@@ -12,6 +12,7 @@ namespace Server
     public class ManageConnection
     {
         ConnectRepo repo;
+        public volatile bool run = true;
 
         public ManageConnection(ConnectRepo cr)
         {
@@ -32,7 +33,7 @@ namespace Server
             NetworkStream stream = client.GetStream(); // Open the network stream to the current client thread.
             
             recMsg = clientConnection.Receive(stream); // get the communication from the client
-            tmpMsg = clientConnection.Parse(recMsg);
+            tmpMsg = clientConnection.Parse(recMsg, clientConnection);
 
             if(tmpMsg.StartsWith("ACK,OK")) // The acknowledgement message is only returned with new connection
             {
@@ -45,19 +46,28 @@ namespace Server
                 
                 clientConnection.Send(clientConnection.AckMsg, stream); // send the acknowledgement that the message was received
 
-                foreach(string msg in repo.msgQueue) // send all the message that are in the queue 
+            }
+        }
+
+        public void SendReplies(ConnectRepo cr)
+        {
+            string recMsg, tmpMsg;
+
+            while(run)
+            {
+                foreach (string msg in repo.msgQueue) // send all the message that are in the queue 
                 {
-                    foreach (KeyValuePair<string, IPAddress> entry in repo.repo) // send message to all other clients
+                    foreach (KeyValuePair<string, Connection> entry in repo.repo) // send message to all other clients
                     {
-                        if (entry.Key != clientConnection.Name) // don't send the message to the sender
+                        if (entry.Key != entry.Value.Name) // don't send the message to the sender
                         {
                             TcpClient tmpClient = new TcpClient(); // server acts like client and connects to client's listener thread
-                            tmpClient.Connect(entry.Value, 23000); // connect to client's IP and port
+                            tmpClient.Connect(entry.Value.IP, 23000); // connect to client's IP and port
                             NetworkStream tmpStream = tmpClient.GetStream(); // get stream to client
-                            clientConnection.Send(msg, tmpStream); // Send the message as a reply to the client
+                            entry.Value.Send(msg, tmpStream); // Send the message as a reply to the client
 
-                            recMsg = clientConnection.Receive(tmpStream); 
-                            tmpMsg = clientConnection.Parse(recMsg); // consider doing something with this... but I'm not sure yet
+                            recMsg = entry.Value.Receive(tmpStream);
+                            tmpMsg = entry.Value.Parse(recMsg, entry.Value); // consider doing something with this... but I'm not sure yet
 
                             tmpStream.Close();
                             tmpClient.Close();
@@ -65,6 +75,7 @@ namespace Server
 
                     }
                 }
+                Thread.Sleep(1000);
             }
         }
     }

@@ -12,29 +12,29 @@ namespace Server
 {
     public class ConnectRepo
     {
-        public ConcurrentDictionary<string, IPAddress> repo;
+        public ConcurrentDictionary<string, Connection> repo;
         public ConcurrentQueue<string> msgQueue;
 
         public ConnectRepo()
         {
-            repo = new ConcurrentDictionary<string, IPAddress>();
+            repo = new ConcurrentDictionary<string, Connection>();
             msgQueue = new ConcurrentQueue<string>();
         }
 
-        public void Add(string key, IPAddress ip)
+        public void Add(string key, Connection c)
         {
-            repo.TryAdd(key, ip);
+            repo.TryAdd(key, c);
         }
 
 
         public void Remove(string key)
         {
-            repo.TryRemove(key, out IPAddress ip);
+            repo.TryRemove(key, out Connection c);
         }
 
         public bool CheckExists(string key)
         {
-            if(repo.TryGetValue(key, out IPAddress ip)) { return true; }
+            if(repo.TryGetValue(key, out Connection c)) { return true; }
             else { return false; }
         }
 
