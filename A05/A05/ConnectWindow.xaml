@@ -51,5 +51,6 @@
                 </Style>
             </Button.Style>
         </Button>
+        <Button Grid.Row="4" Grid.Column="0" Height="35" Width="125" Content="Cancel" Click="cancelWindow"/>
     </Grid>
 </Window>

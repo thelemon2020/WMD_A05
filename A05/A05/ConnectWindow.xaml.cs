@@ -23,9 +23,11 @@ namespace A05
         public string userPassword { get; set; }
         public string ipAddress { get; set; }
         public int port { get; set; }
+        public bool canProceed { get; set; }
         public ConnectWindow()
         {
             InitializeComponent();
+            canProceed = false; 
         }
 
         private void startConnect(object sender, RoutedEventArgs e)
@@ -36,6 +38,12 @@ namespace A05
             ipAddress = IP.Text;
             int.TryParse(Port.Text, out tempPort);
             port = tempPort;
+            canProceed = true;
+            this.Close();
+        }
+
+        private void cancelWindow(object sender, RoutedEventArgs e)
+        {
             this.Close();
         }
     }
