@@ -9,7 +9,7 @@ namespace A05
 {
     class DisconnectCommand : Command
     {
-        public DisconnectCommand(connection currentConnection, Mutex toWrite)
+        public DisconnectCommand(connection currentConnection)
         {
             command = "DISCONNECT";
             serverIP = currentConnection.ipAddress;

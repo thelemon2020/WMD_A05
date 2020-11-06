@@ -15,17 +15,28 @@ namespace A05
         public byte[] password { get; set; }
         public IPAddress ipAddress { get; set; }
 
-        public StartConnectionCommand(connection newConnection, Mutex toWrite, IPAddress ip)
+        public StartConnectionCommand(connection newConnection, IPAddress ip)
         {
             password = hashPassword(newConnection.userPassword);
             userName = newConnection.username;
             serverIP = newConnection.ipAddress;
             serverPort = newConnection.serverPort;
             command = "CONNECT";
-            waitToWrite = toWrite;
             ipAddress = ip;
             createProtocol();
         }
+
+        public StartConnectionCommand(connection newConnection, IPAddress ip, string userCommand)
+        {
+            password = hashPassword(newConnection.userPassword);
+            userName = newConnection.username;
+            serverIP = newConnection.ipAddress;
+            serverPort = newConnection.serverPort;
+            command = userCommand;
+            ipAddress = ip;
+            createProtocol();
+        }
+
         private byte[] hashPassword(string password)
         {
             MD5 hasher = MD5.Create();

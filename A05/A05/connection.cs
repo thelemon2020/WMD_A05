@@ -16,7 +16,7 @@ namespace A05
         public IPAddress ipAddress { get; set; }
         public int serverPort { get; set; }
 
-        public connection(string user, string pass, string address, int port, Mutex canWrite)
+        public connection(string user, string pass, string address, int port)
         {
             username = user;
             userPassword = pass;

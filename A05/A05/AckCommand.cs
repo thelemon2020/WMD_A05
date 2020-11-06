@@ -9,10 +9,8 @@ namespace A05
 {
     class AckCommand : Command
     {
-        public AckCommand(connection currentConnection, string userCommand)
+        public AckCommand(string userCommand)
         {
-            serverIP = currentConnection.ipAddress;
-            serverPort = currentConnection.serverPort;
             command = userCommand;
             createProtocol();
         }

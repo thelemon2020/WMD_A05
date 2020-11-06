@@ -12,13 +12,12 @@ namespace A05
     {
         public string message { get; set; }
         
-        public SendMessageCommand(connection currentConnection, string userMessage, Mutex toWrite)
+        public SendMessageCommand(connection currentConnection, string userMessage)
         {
             serverIP = currentConnection.ipAddress;
             serverPort = currentConnection.serverPort;
             message = userMessage;
             command = "SEND";
-            waitToWrite = toWrite;
             createProtocol();
         }
         private void createProtocol()
