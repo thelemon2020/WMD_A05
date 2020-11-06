@@ -34,8 +34,9 @@ namespace Server
         private void startServer(TcpListener listener)
         {
             Console.WriteLine("Listening for Connections. . .");
+            Thread replyThread = new Thread(new ThreadStart(() => manager.SendReplies(repo)));
 
-            while(true)
+            while(manager.run)
             {
                 if(!listener.Pending())
                 {
