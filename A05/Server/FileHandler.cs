@@ -16,6 +16,17 @@ namespace Server
         {
             msgLogPath = "./log.txt";
             credentialPath = "./login.txt";
+            if(!File.Exists(msgLogPath))
+            {
+                var LogStream = File.Create(msgLogPath);
+                LogStream.Close();
+            }
+
+            if(!File.Exists(credentialPath))
+            {
+                var pwStream = File.Create(credentialPath);
+                pwStream.Close();
+            }
         }
 
         public void WriteLog(string msg)

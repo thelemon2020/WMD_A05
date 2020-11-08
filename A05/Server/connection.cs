@@ -18,13 +18,18 @@ namespace Server
         public string ReplyMsg { get; set; }
         public bool ShutDown { get; set; }
         public string Password { private get; set; }
+        public string[] MsgLog { get; set; }
+
+        private readonly object lockObj;
 
         ConnectRepo repo;
+        FileHandler fh = new FileHandler();
 
-        public Connection(ConnectRepo cr)
+        public Connection(ConnectRepo cr, object obj)
         {
             repo = cr;
             ShutDown = false;
+            lockObj = obj;
         }
 
         public void Send(string msg, NetworkStream stream)
@@ -56,15 +61,39 @@ namespace Server
             //Delegate which resulting command is necessary
             string[] splitMsg = recMsg.Split(',');
 
-            if(splitMsg[0] == "CONNECT")
+            if(splitMsg[0] == "REGISTER") // Register command sent by user
+            {
+                AckCommand ack = new AckCommand();
+                Name = splitMsg[2];
+                Password = splitMsg[3];
+                if(!fh.CheckExist(Name, Password)) // if the user doesn't exist yet, create an entry for them on the file
+                {
+                    fh.WriteCredentials(Name + "," + Password);
+                    AckMsg = ack.BuildProtocol(kOK); // send an acknowledgment back
+                }
+                else // If the user exists already, then send back a NACK
+                {
+                    AckMsg = ack.BuildProtocol(kFail);
+                }
+            }
+            else if(splitMsg[0] == "CONNECT")
             {
                 // delegate the AckCommand
                 AckCommand ackOK = new AckCommand();
                 IP = IPAddress.Parse(splitMsg[1]); // parse the IP address of the client 
                 Name = splitMsg[2]; // get the name from the incoming connect message
-                Password = splitMsg[3]; // NEED TO ADD PASSWORD TO FILE
-                AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
-                repo.Add(Name, c); // Add the new client into the repo
+                Password = splitMsg[3]; 
+                
+                if(fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
+                {
+                    MsgLog = fh.ReadLog();
+                    AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
+                    repo.Add(Name, c); // Add the new client into the repo
+                }
+                else
+                {
+                    AckMsg = ackOK.BuildProtocol(kFail);
+                }
             }
             else if(splitMsg[0] == "SEND")
             {

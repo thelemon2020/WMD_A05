@@ -32,7 +32,7 @@ namespace Server
             // In this handle client method, the server doesn't need to keep this in a loop
             // The server simply gets a connection receives a message, sends an acknowledgment and then closes connection
             string recMsg;
-            Connection clientConnection = new Connection(repo); // create a new connection class for each client thread
+            Connection clientConnection = new Connection(repo, lockobj); // create a new connection class for each client thread
             NetworkStream stream = client.GetStream(); // Open the network stream to the current client thread.
             
             recMsg = clientConnection.Receive(stream); // get the communication from the client
