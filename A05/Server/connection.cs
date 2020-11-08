@@ -16,6 +16,7 @@ namespace Server
         public IPAddress IP { get; set; }
         public string AckMsg { get; set; }
         public string ReplyMsg { get; set; }
+        public bool ShutDown { get; set; }
         public string Password { private get; set; }
 
         ConnectRepo repo;
@@ -23,6 +24,7 @@ namespace Server
         public Connection(ConnectRepo cr)
         {
             repo = cr;
+            ShutDown = false;
         }
 
         public void Send(string msg, NetworkStream stream)
@@ -49,7 +51,7 @@ namespace Server
         }
 
 
-        public string Parse(string recMsg, Connection c)
+        public void Parse(string recMsg, Connection c)
         {
             //Delegate which resulting command is necessary
             string[] splitMsg = recMsg.Split(',');
@@ -63,7 +65,6 @@ namespace Server
                 Password = splitMsg[3]; // NEED TO ADD PASSWORD TO FILE
                 AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
                 repo.Add(Name, c); // Add the new client into the repo
-                return AckMsg;
             }
             else if(splitMsg[0] == "SEND")
             {
@@ -75,18 +76,24 @@ namespace Server
                 Name = splitMsg[1]; // get the name from the message header
                 ReplyMsg = reply.BuildProtocol(Name, tmpMsg); // build the reply
                 repo.AddMsg(ReplyMsg); // Add the message that came in to the queue to be sent
-                return ReplyMsg;
             }
             else if(splitMsg[0] == "ACK")
             {
-                return "OK";
+                return; // If the client sends an acknowledgement of reply received, don't need to do anything as of now
+            }
+            else if(splitMsg[0] == "DISCONNECT") // if a super user sends the server shut off command
+            {
+                repo.Remove(Name);
+            }
+            else if(splitMsg[0] == "SHUTDOWN")
+            {
+                ShutDown = true;
             }
             else
             {
                 // delegate Ack fail
                 AckCommand ackFail = new AckCommand();
                 AckMsg = ackFail.BuildProtocol(kFail);
-                return AckMsg;
             }
         }
     }

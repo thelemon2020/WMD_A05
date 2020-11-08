@@ -13,6 +13,7 @@ namespace Server
     {
         ConnectRepo repo;
         public volatile bool run = true;
+        public readonly object lockobj;
 
         public ManageConnection(ConnectRepo cr)
         {
@@ -28,54 +29,59 @@ namespace Server
 
         private void HandleClient(TcpClient client, ConnectRepo repo)
         {
-            string recMsg, ackMsg, tmpMsg;
+            // In this handle client method, the server doesn't need to keep this in a loop
+            // The server simply gets a connection receives a message, sends an acknowledgment and then closes connection
+            string recMsg;
             Connection clientConnection = new Connection(repo); // create a new connection class for each client thread
             NetworkStream stream = client.GetStream(); // Open the network stream to the current client thread.
             
             recMsg = clientConnection.Receive(stream); // get the communication from the client
-            tmpMsg = clientConnection.Parse(recMsg, clientConnection);
+            clientConnection.Parse(recMsg, clientConnection); // parse the command
 
-            if(tmpMsg.StartsWith("ACK,OK")) // The acknowledgement message is only returned with new connection
-            {
-                ackMsg = tmpMsg;
-                clientConnection.Send(ackMsg, stream); // send acknowledgement of first connection
-                stream.Close();
-            }
-            else if(tmpMsg.StartsWith("REPLY")) // If the message was sent from a client to chat it will be sent out as reply
-            {
-                
-                clientConnection.Send(clientConnection.AckMsg, stream); // send the acknowledgement that the message was received
+            clientConnection.Send(clientConnection.AckMsg, stream); // send back an acknowledgement of receiving
 
-            }
+            stream.Close(); // close the stream then close the connection. no need to keep them open any longer
+            client.Close();
         }
 
         public void SendReplies(ConnectRepo cr)
         {
-            string recMsg, tmpMsg;
-
             while(run)
             {
-                foreach (string msg in repo.msgQueue) // send all the message that are in the queue 
+                if(cr.msgQueue.IsEmpty) // we only need to send messages when there are messages in the queue
                 {
-                    foreach (KeyValuePair<string, Connection> entry in repo.repo) // send message to all other clients
+                    Thread.Sleep(500);
+                    continue;
+                }
+                else // if there are messages in the queue then go through each message and send it to each connection
+                {
+                    foreach (string msg in repo.msgQueue) // send all the message that are in the queue 
                     {
-                        if (entry.Key != entry.Value.Name) // don't send the message to the sender
+                        foreach (KeyValuePair<string, Connection> entry in repo.repo) // send message to all other clients
                         {
-                            TcpClient tmpClient = new TcpClient(); // server acts like client and connects to client's listener thread
-                            tmpClient.Connect(entry.Value.IP, 23000); // connect to client's IP and port
-                            NetworkStream tmpStream = tmpClient.GetStream(); // get stream to client
-                            entry.Value.Send(msg, tmpStream); // Send the message as a reply to the client
+                            if (entry.Key != entry.Value.Name) // don't send the message to the sender
+                            {
+                                string recMsg = "";
+                                TcpClient tmpClient = new TcpClient(); // server acts like client and connects to client's listener thread
+                                tmpClient.Connect(entry.Value.IP, 23000); // connect to client's IP and port
+                                NetworkStream tmpStream = tmpClient.GetStream(); // get stream to client
+                                entry.Value.Send(msg, tmpStream); // Send the message as a reply to the client
 
-                            recMsg = entry.Value.Receive(tmpStream);
-                            tmpMsg = entry.Value.Parse(recMsg, entry.Value); // consider doing something with this... but I'm not sure yet
+                                recMsg = entry.Value.Receive(tmpStream);
+                                entry.Value.Parse(recMsg, entry.Value); /// parse the received message, which will be an ack
 
-                            tmpStream.Close();
-                            tmpClient.Close();
+                                tmpStream.Close();
+                                tmpClient.Close();
+
+                                if(entry.Value.ShutDown == true) // if the shut down command is given, finish sending all messages
+                                {                                // then stop the server.
+                                    run = false;
+                                }
+                            }
+
                         }
-
                     }
                 }
-                Thread.Sleep(1000);
             }
         }
     }
