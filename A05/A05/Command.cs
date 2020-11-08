@@ -17,13 +17,11 @@ namespace A05
         public IPAddress serverIP { get; set; }
         public int serverPort { get; set; }
         public StringBuilder protocol { get; set; }
-        public Mutex waitToWrite { get; set; }
         
         public string ExecuteCommand()
         {
             NetworkStream serverStream = null;
             StringBuilder serverResponse = new StringBuilder();
-            waitToWrite.WaitOne();
             serverStream = InteractWithServer.connectToServer(serverIP, serverPort);
             if (serverStream == null)
             {
@@ -36,7 +34,6 @@ namespace A05
                 serverResponse.Append(InteractWithServer.readFromServer(serverStream));
                 InteractWithServer.closeConnection(serverStream);
             }
-            waitToWrite.ReleaseMutex();
             return serverResponse.ToString();
         }
     }

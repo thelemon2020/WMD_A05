@@ -58,6 +58,10 @@
     <Compile Include="AckCommand.cs" />
     <Compile Include="DisconnectCommand.cs" />
     <Compile Include="InteractWithServer.cs" />
+    <Compile Include="RegisterCommand.cs" />
+    <Compile Include="RegisterWindow.xaml.cs">
+      <DependentUpon>RegisterWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SendMessageCommand.cs" />
     <Compile Include="StartConnectionCommand.cs" />
     <Compile Include="connection.cs" />
@@ -81,6 +85,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="RegisterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
