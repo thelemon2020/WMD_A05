@@ -29,11 +29,11 @@ using System.Windows.Shapes;
 namespace A05
 {
 
-   /*
-    * NAME : MainWindow
-    * PURPOSE : This is the main window for the client portion of the chat program.  it holds the logic for listening for registering, connecting
-    *           recieiving, sending and updating the chat window itself 
-    */
+    /*
+     * NAME : MainWindow
+     * PURPOSE : This is the main window for the client portion of the chat program.  it holds the logic for listening for registering, connecting
+     *           recieiving, sending and updating the chat window itself 
+     */
     public partial class MainWindow : Window
     {
         //properties
@@ -46,17 +46,17 @@ namespace A05
         {
             InitializeComponent();
         }
-       /*
-        * METHOD : Connect_Click()
-        *
-        * DESCRIPTION : This method is triggered when the user clicks the Connect To Server button.  It creates a instance of ConnectWindow
-        *               and creates a ConnectCommand to send off to the chat server.
-        *
-        * PARAMETERS : sender - the object that called this method
-        *              e - the arguments sent by the routed event
-        *
-        * RETURNS : Nothing
-        */
+        /*
+         * METHOD : Connect_Click()
+         *
+         * DESCRIPTION : This method is triggered when the user clicks the Connect To Server button.  It creates a instance of ConnectWindow
+         *               and creates a ConnectCommand to send off to the chat server.
+         *
+         * PARAMETERS : sender - the object that called this method
+         *              e - the arguments sent by the routed event
+         *
+         * RETURNS : Nothing
+         */
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
             //start instance of connectWindow
@@ -85,7 +85,7 @@ namespace A05
                         else
                         {
                             connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
-                        }   
+                        }
                         chatWindow.Text += connectedMessage;
                         int i = 3;
                         List<string> listOfUsers = new List<string>();
@@ -107,9 +107,9 @@ namespace A05
                         Thread checkForNewMessages = new Thread(listenForMessages);
                         checkForNewMessages.Start();
                     }
-                    else if(serverResponse[0] == "NACK")
+                    else if (serverResponse[0] == "NACK")
                     {
-                        chatWindow.Text += "Connection Failed - " + serverResponse[1] + "\n"; 
+                        chatWindow.Text += "Connection Failed - " + serverResponse[1] + "\n";
                         currentConnection = null;
                     }
                     else
@@ -152,7 +152,7 @@ namespace A05
                 InteractWithServer.writeToServer(readStream, acknowledge.protocol.ToString());
                 readStream.Close();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 string[] exceptionString = new string[3];
                 exceptionString[0] = "REPLY";
@@ -161,13 +161,13 @@ namespace A05
             }
         }
         private void updateUI(string[] arguments)
-        {                    
+        {
             if (arguments[0] == "REPLY")
             {
                 changeChatWindow(arguments);
             }
             else if (arguments[0] == "DISCONNECT")
-            { 
+            {
                 shutDownServer(arguments);
             }
             else if (arguments[0] == "ADD")
@@ -202,7 +202,7 @@ namespace A05
                 dispatcher.Invoke(callback, new object[] { str });
             }
             else
-            {                
+            {
                 string[] list = userList.Text.Split('\n');
                 userList.Text = "";
                 int i = 0;
@@ -244,7 +244,7 @@ namespace A05
                 SendMessageCommand messageToSend = new SendMessageCommand(currentConnection, userInput.Text);
                 messageToSend.ExecuteCommand();
                 chatWindow.Text += (currentConnection.username + ">" + userInput.Text + "\n");
-                userInput.Text = "";              
+                userInput.Text = "";
             }
         }
         private void disconnectFromServer(object sender, RoutedEventArgs e)
@@ -333,10 +333,7 @@ namespace A05
                 string[] returnMessage = regComm.ExecuteCommand().Split(',');
                 if (returnMessage[0] == "NACK")
                 {
-                    if (returnMessage[1] == "0")
-                    {
-                        chatWindow.Text += "Registration Failed - " + returnMessage[1] + "\n";
-                    }
+                    chatWindow.Text += "Registration Failed - " + returnMessage[1] + "\n";
                 }
                 else
                 {
@@ -345,6 +342,30 @@ namespace A05
                 currentConnection = null;
             }
             reg.Close();
+        }
+
+        private void SuperShutDown(object sender, RoutedEventArgs e)
+        {
+            ShutDownCommand shutItDown = new ShutDownCommand(currentConnection);
+            shutItDown.ExecuteCommand();
+        }
+
+        private void CommandBinding_CanExecute_Close(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed_Close(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (currentConnection != null)
+            {
+                //disconnectFromServer();
+            }
         }
     }
 }

@@ -38,7 +38,8 @@ namespace A05
                     InteractWithServer.closeConnection(serverStream);
                     if (serverResponse.Contains("NACK"))
                     {
-
+                        string[] temp = serverResponse.Split(',');
+                        serverResponse = "Server Returned Error -" + temp[1] + "\n";
                     }
                 }
             }

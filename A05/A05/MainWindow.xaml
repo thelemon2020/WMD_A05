@@ -6,15 +6,22 @@
         xmlns:local="clr-namespace:A05"
         xmlns:A05="clr-namespace:A05"
         mc:Ignorable="d"
-        Title="Chat Client" ResizeMode="NoResize" Height="450" Width="810.286">
+        Title="Chat Client" ResizeMode="NoResize" Height="450" Width="810.286"
+        Closing="MainWindow_Closing">
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <MenuItem Header="Register Account" Click="Register_Click"></MenuItem>
                 <MenuItem Header="Connect To Server" Click="Connect_Click" Name="MenuConnect"></MenuItem>
                 <MenuItem Header="Disconnect From Server" Name="MenuDisconnect" IsEnabled="False" Click="disconnectFromServer"></MenuItem>
-                <MenuItem Header="Shut Down Server" Name ="SuperUserButton"  IsEnabled="false"></MenuItem>
-                <MenuItem Header="Close"></MenuItem>
+                <MenuItem Header="Shut Down Server" Name ="SuperUserButton"  Click="SuperShutDown" IsEnabled="false"></MenuItem>
+                <MenuItem Command="ApplicationCommands.Close">
+                    <MenuItem.CommandBindings>
+                        <CommandBinding Command="ApplicationCommands.Close"
+                                        CanExecute="CommandBinding_CanExecute_Close"
+                                        Executed="CommandBinding_Executed_Close"/>
+                    </MenuItem.CommandBindings>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Options"></MenuItem>
         </Menu>

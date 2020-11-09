@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Remoting.Proxies;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -97,6 +98,7 @@ namespace Server
                         AckCommand ack = new AckCommand();
                         fh.WriteCredentials(Name + "," + Password);
                         AckMsg = ack.BuildProtocol(); // send an acknowledgment back
+                        repo.AddMsg("DISCONNECT,<EOF>");
                     }
                     else // If the user exists already, then send back a NACK
                     {
@@ -164,6 +166,7 @@ namespace Server
                     AckCommand ack = new AckCommand();
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;
+                    
                 }
                 else
                 {

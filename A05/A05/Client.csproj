@@ -63,6 +63,7 @@
       <DependentUpon>RegisterWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SendMessageCommand.cs" />
+    <Compile Include="ShutDownCommand.cs" />
     <Compile Include="StartConnectionCommand.cs" />
     <Compile Include="connection.cs" />
     <Compile Include="ConnectWindow.xaml.cs">
