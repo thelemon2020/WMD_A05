@@ -15,6 +15,7 @@ namespace A05
             serverIP = currentConnection.ipAddress;
             serverPort = currentConnection.serverPort;
             userName = currentConnection.username;
+            createProtocol();
         }
         private void createProtocol()
         {
