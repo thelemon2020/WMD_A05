@@ -42,6 +42,7 @@ namespace A05
 
         delegate void MyCallback(Object obj);
 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -77,7 +78,10 @@ namespace A05
                     {
                         isConnected = true;
                         string connectedMessage = "";
-                        if (serverResponse[2] == "1")
+                        int tempNum = 0;
+                        int.TryParse(serverResponse[2], out tempNum);
+                        currentConnection.clientPort = tempNum;
+                        if (serverResponse[3] == "1")
                         {
                             connectedMessage = string.Format("Connected to server at {0} with Super User Privileges\n", currentConnection.ipAddress.ToString());
                             SuperUserButton.IsEnabled = true;
@@ -87,7 +91,7 @@ namespace A05
                             connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
                         }
                         chatWindow.Text += connectedMessage;
-                        int i = 3;
+                        int i = 4;
                         List<string> listOfUsers = new List<string>();
                         while (serverResponse[i] != "<EOF>")
                         {
@@ -122,7 +126,7 @@ namespace A05
         }
         private void listenForMessages()
         {
-            TcpListener listener = new TcpListener(IPAddress.Any, 35000);
+            TcpListener listener = new TcpListener(IPAddress.Any, currentConnection.clientPort);
             startServer(listener);
         }
         private void startServer(TcpListener listener)
@@ -147,10 +151,10 @@ namespace A05
             {
                 NetworkStream readStream = client.GetStream();
                 string[] incomingData = InteractWithServer.readFromServer(readStream).Split(',');
-                updateUI(incomingData);
                 AckCommand acknowledge = new AckCommand("ACK,<EOF>");
                 InteractWithServer.writeToServer(readStream, acknowledge.protocol.ToString());
                 readStream.Close();
+                updateUI(incomingData);
             }
             catch (Exception e)
             {
@@ -168,7 +172,7 @@ namespace A05
             }
             else if (arguments[0] == "DISCONNECT")
             {
-                shutDownServer(arguments);
+                startShutDownProcess();
             }
             else if (arguments[0] == "ADD")
             {
@@ -249,74 +253,96 @@ namespace A05
         }
         private void disconnectFromServer(object sender, RoutedEventArgs e)
         {
+            DisconnectCommand disconnect = new DisconnectCommand(currentConnection);
+            disconnect.ExecuteCommand();
             startShutDownProcess();
         }
         private void startShutDownProcess()
         {
-            DisconnectCommand disconnect = new DisconnectCommand(currentConnection);
-            disconnect.ExecuteCommand();
-            shutDownServer(disconnect);
+            string disconnect = "";
+            shutDownServerChatWindow(disconnect);
+            shutDownServerMenuConnect(disconnect);
+            shutDownServerMenuDisconnect(disconnect);
+            shutDownServerSubmitMessage(disconnect);
+            shutDownServerUserInput(disconnect);
+            shutDownServerUserList(disconnect);
+            isConnected = false;
+            currentConnection = null;
         }
-        public void shutDownServer(Object str)
+        public void shutDownServerChatWindow(Object str)
         {
             var dispatcher = chatWindow.Dispatcher;
             if (!dispatcher.CheckAccess())
             {
-                MyCallback callback = new MyCallback(shutDownServer);
-                dispatcher.Invoke(callback);
+                MyCallback callback = new MyCallback(shutDownServerChatWindow);
+                dispatcher.Invoke(callback, new object[] { str });
             }
             else
             {
                 chatWindow.Text += "Disconnected from server at " + currentConnection.ipAddress + "\n";
             }
-            dispatcher = MenuDisconnect.Dispatcher;
-            isConnected = false;
-            currentConnection = null;
+        }
+        public void shutDownServerMenuDisconnect(Object str)
+        {
+            var dispatcher = MenuDisconnect.Dispatcher;
+
             if (!dispatcher.CheckAccess())
             {
-                MyCallback callback = new MyCallback(shutDownServer);
-                dispatcher.Invoke(callback);
+                MyCallback callback = new MyCallback(shutDownServerMenuDisconnect);
+                dispatcher.Invoke(callback, new object[] { str });
             }
             else
             {
                 MenuDisconnect.IsEnabled = false;
             }
-            dispatcher = MenuConnect.Dispatcher;
+        }
+        public void shutDownServerMenuConnect(Object str)
+        {
+            var dispatcher = MenuConnect.Dispatcher;
             if (!dispatcher.CheckAccess())
             {
-                MyCallback callback = new MyCallback(shutDownServer);
-                dispatcher.Invoke(callback);
+                MyCallback callback = new MyCallback(shutDownServerMenuConnect);
+                dispatcher.Invoke(callback, new object[] { str });
             }
             else
             {
                 MenuConnect.IsEnabled = true;
             }
-            dispatcher = userList.Dispatcher;
+        }
+        public void shutDownServerUserList(Object str)
+        {
+            var dispatcher = userList.Dispatcher;
             if (!dispatcher.CheckAccess())
             {
-                MyCallback callback = new MyCallback(shutDownServer);
-                dispatcher.Invoke(callback);
+                MyCallback callback = new MyCallback(shutDownServerUserList);
+                dispatcher.Invoke(callback, new object[] { str });
             }
             else
             {
                 userList.Text = "";
             }
-            dispatcher = SubmitMessage.Dispatcher;
+        }
+        public void shutDownServerSubmitMessage(Object str)
+        {
+            var dispatcher = SubmitMessage.Dispatcher;
             if (!dispatcher.CheckAccess())
             {
-                MyCallback callback = new MyCallback(shutDownServer);
-                dispatcher.Invoke(callback);
+                MyCallback callback = new MyCallback(shutDownServerSubmitMessage);
+                dispatcher.Invoke(callback, new object[] { str });
             }
             else
             {
                 SubmitMessage.IsEnabled = false;
             }
-            dispatcher = userInput.Dispatcher;
+        }
+        public void shutDownServerUserInput(Object str)
+        {
+            var dispatcher = userInput.Dispatcher;
             if (!dispatcher.CheckAccess())
             {
-                MyCallback callback = new MyCallback(shutDownServer);
-                dispatcher.Invoke(callback);
-            }
+                MyCallback callback = new MyCallback(shutDownServerUserInput);
+                dispatcher.Invoke(callback, new object[] { str });
+            }      
             else
             {
                 userInput.Text = "";

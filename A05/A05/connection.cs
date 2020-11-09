@@ -15,6 +15,7 @@ namespace A05
         public string userPassword { get; set; }
         public IPAddress ipAddress { get; set; }
         public int serverPort { get; set; }
+        public int clientPort { get; set; }
 
         public connection(string user, string pass, string address, int port)
         {

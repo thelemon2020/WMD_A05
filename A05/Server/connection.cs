@@ -43,7 +43,7 @@ namespace Server
         public void Send(string msg, NetworkStream stream)
         {
             //package the message up into bytes, and then send on the current client stream
-            byte[] msgBytes = Encoding.ASCII.GetBytes(msg);
+            byte[] msgBytes = Encoding.ASCII.GetBytes(msg);;
             try
             {
                 stream.Write(msgBytes, 0, msgBytes.Length);
@@ -165,13 +165,13 @@ namespace Server
                 Name = splitMsg[1];
                 Password = splitMsg[2];
                 bool isSuper = fh.IsSuper(Name + "," + Password);
-                if(isSuper)
+                if (isSuper)
                 {
-                    repo.AddMsg("DISCONNECT,<EOF>");
                     AckCommand ack = new AckCommand();
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;
-                    Console.WriteLine("{0} Shutdown the Server");
+                    Console.WriteLine("{0} Shutdown the Server", Name);
+                    repo.AddMsg("DISCONNECT,<EOF>");
                 }
                 else
                 {
