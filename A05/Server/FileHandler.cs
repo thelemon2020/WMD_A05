@@ -45,7 +45,7 @@ namespace Server
 
         public bool CheckExist(string user, string pw)
         {
-            string credentials = user + "," + pw + "\n";
+            string credentials = user + "," + pw;
             string[] lines = File.ReadAllLines(credentialPath); // get all lines from the password file
             foreach(string line in lines) // for every line retrieved from the password file
             {
