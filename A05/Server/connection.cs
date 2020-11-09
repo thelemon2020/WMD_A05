@@ -100,7 +100,7 @@ namespace Server
                     {
                         AckCommand ack = new AckCommand();
                         repo.Add(Name, c); // Add the new client into the repo
-                        AckMsg = ack.BuildProtocol(kOK, repo); // build the acknowledgement 
+                        AckMsg = ack.BuildProtocol(repo); // build the acknowledgement 
 
                     }
                     else
