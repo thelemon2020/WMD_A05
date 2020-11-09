@@ -91,7 +91,8 @@ namespace A05
                         List<string> listOfUsers = new List<string>();
                         while (serverResponse[i] != "<EOF>")
                         {
-                            listOfUsers.Add(serverResponse[i] + "\n");
+                            string newEntry = serverResponse[i] + "\n";
+                            listOfUsers.Add(newEntry);
                             i++;
                         }
                         listOfUsers.Sort();
@@ -191,8 +192,9 @@ namespace A05
                 dispatcher.Invoke(callback, new object[] { str });
             }
             else
-            {
+            {                
                 string[] list = userList.Text.Split('\n');
+                userList.Text = "";
                 int i = 0;
                 List<string> listOfCurrentUsers = new List<string>();
                 while (list[i] != "")
