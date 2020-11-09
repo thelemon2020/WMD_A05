@@ -5,7 +5,8 @@
 * FIRST VERSION : 2020 - 11 - 02 
 * REVISED ON : 2020 - 11 - 08
 * DESCRIPTION : This file defines the MainWindow UI class.  
-*/using System;
+*/
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
