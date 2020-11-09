@@ -35,6 +35,7 @@ namespace Server
         {
             Console.WriteLine("Listening for Connections. . .");
             Thread replyThread = new Thread(new ThreadStart(() => manager.SendReplies(repo))); // create a client that acts so send messages
+            replyThread.Start();
 
             while(manager.run)
             {
