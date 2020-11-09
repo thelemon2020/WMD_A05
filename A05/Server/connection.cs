@@ -153,20 +153,21 @@ namespace Server
             {
                 Name = splitMsg[1]; // get the name from the incoming connect message
                 Password = splitMsg[2];
-
                 lock (lockObj)
                 {
+                    Port = fh.ClientCount();
+                    fh.UpdateClientLog();
                     if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
                     {
                         AckCommand ack = new AckCommand();
                         repo.Add(Name, c); // Add the new client into the repo
                         if(fh.IsSuper(Name+","+Password))
                         {
-                            AckMsg = ack.BuildProtocol(kSuperUser, repo); // build the acknowledgement for super user
+                            AckMsg = ack.BuildProtocol(kSuperUser, repo, c); // build the acknowledgement for super user
                         }
                         else
                         {
-                            AckMsg = ack.BuildProtocol(kNormalUser, repo); // build the acknowledgement for normal user
+                            AckMsg = ack.BuildProtocol(kNormalUser, repo, c); // build the acknowledgement for normal user
                         }
                         Console.WriteLine("User {0} Connected", Name);
                     }
@@ -212,6 +213,10 @@ namespace Server
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;
                     Console.WriteLine("{0} Shutdown the Server");
+                    lock(lockObj)
+                    {
+                        fh.ClearClientLog();
+                    }
                 }
                 else
                 {

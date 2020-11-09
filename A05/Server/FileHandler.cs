@@ -21,11 +21,13 @@ namespace Server
     public class FileHandler
     {
         private string credentialPath;
+        private string clientLog;
         private string super = "admin,!#/)zW??C?J\u000eJ?\u001f?"; // this is awful form, I know, not very secure
 
         public FileHandler()
         {
             credentialPath = "./login.txt";
+            clientLog = "./clientLog.txt";
             try
             {
                 if (!File.Exists(credentialPath))
@@ -34,6 +36,62 @@ namespace Server
                     pwStream.Close();
                     WriteCredentials(super);
                 }
+                if(!File.Exists(clientLog))
+                {
+                    var logStream = File.Create(clientLog);
+                    logStream.Close();
+                }
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+
+        public int ClientCount()
+        {
+            int port = 35000;
+            string[] lines = new string[1024];
+            try
+            {
+                lines = File.ReadAllLines(clientLog);
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine(e.ToString());
+                return port;
+            }
+
+            if(lines.Length == 0)
+            {
+                return port;
+            }
+            foreach(string line in lines)
+            {
+                port++;
+            }
+            return port;
+        }
+
+
+        public void UpdateClientLog()
+        {
+            try
+            {
+                File.AppendAllText(clientLog, "new client\n");
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public void ClearClientLog()
+        {
+            try
+            {
+                File.WriteAllText(clientLog, "");
             }
             catch(IOException e)
             {

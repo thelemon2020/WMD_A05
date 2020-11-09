@@ -48,12 +48,6 @@ namespace Server
             AddMsg(removeMessage);
         }
 
-        public bool CheckExists(string key)
-        {
-            if(repo.TryGetValue(key, out Connection c)) { return true; }
-            else { return false; }
-        }
-
         public void AddMsg(string msg)
         {
             msgQueue.Enqueue(msg);

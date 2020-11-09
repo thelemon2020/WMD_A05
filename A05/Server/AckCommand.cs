@@ -50,13 +50,15 @@ namespace Server
         //              : ConnectRepo repo : The repo for which users are connected
         // Returns      : string tmpMsg : The built string to be sent to the user containing an ack, as well as the list of users
         /////////////////////////////////////////
-        public string BuildProtocol(int flag, ConnectRepo repo)
+        public string BuildProtocol(int flag, ConnectRepo repo, Connection c)
         {
             string tmpMsg = "";
 
             protocol.Append(header); // build the acknowledgement so it's ready to send
             protocol.Append(",");
             protocol.Append(okMsg);
+            protocol.Append(",");
+            protocol.Append(c.Port);
             protocol.Append(",");
             protocol.Append(flag);
             protocol.Append(",");
