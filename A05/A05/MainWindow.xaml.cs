@@ -103,7 +103,7 @@ namespace A05
                         userInput.IsEnabled = true;
                         SubmitMessage.IsEnabled = true;
                         MenuDisconnect.IsEnabled = true;
-                        MenuConnect.IsEnabled = true;
+                        MenuConnect.IsEnabled = false;
                         Thread checkForNewMessages = new Thread(listenForMessages);
                         checkForNewMessages.Start();
                     }
@@ -143,12 +143,22 @@ namespace A05
         }
         private void handleConnection(TcpClient client)
         {
-            NetworkStream readStream = client.GetStream();
-            string[] incomingData = InteractWithServer.readFromServer(readStream).Split(',');
-            updateUI(incomingData);
-            AckCommand acknowledge = new AckCommand("ACK,<EOF>");
-            InteractWithServer.writeToServer(readStream, acknowledge.protocol.ToString());
-            readStream.Close();
+            try
+            {
+                NetworkStream readStream = client.GetStream();
+                string[] incomingData = InteractWithServer.readFromServer(readStream).Split(',');
+                updateUI(incomingData);
+                AckCommand acknowledge = new AckCommand("ACK,<EOF>");
+                InteractWithServer.writeToServer(readStream, acknowledge.protocol.ToString());
+                readStream.Close();
+            }
+            catch(Exception e)
+            {
+                string[] exceptionString = new string[3];
+                exceptionString[0] = "REPLY";
+                exceptionString[1] = "Server Error";
+                exceptionString[2] = e.Message.ToString();
+            }
         }
         private void updateUI(string[] arguments)
         {                    
@@ -287,7 +297,28 @@ namespace A05
             {
                 userList.Text = "";
             }
-            
+            dispatcher = SubmitMessage.Dispatcher;
+            if (!dispatcher.CheckAccess())
+            {
+                MyCallback callback = new MyCallback(shutDownServer);
+                dispatcher.Invoke(callback);
+            }
+            else
+            {
+                SubmitMessage.IsEnabled = false;
+            }
+            dispatcher = userInput.Dispatcher;
+            if (!dispatcher.CheckAccess())
+            {
+                MyCallback callback = new MyCallback(shutDownServer);
+                dispatcher.Invoke(callback);
+            }
+            else
+            {
+                userInput.Text = "";
+                userInput.IsEnabled = false;
+            }
+
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
