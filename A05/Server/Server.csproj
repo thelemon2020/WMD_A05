@@ -49,6 +49,7 @@
     <Compile Include="ConnectRepo.cs" />
     <Compile Include="FileHandler.cs" />
     <Compile Include="ManageConnection.cs" />
+    <Compile Include="NackCommand.cs" />
     <Compile Include="ReplyCommand.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
