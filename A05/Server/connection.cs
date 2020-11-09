@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Proxies;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Server
@@ -164,10 +165,10 @@ namespace Server
                 bool isSuper = fh.IsSuper(Name + "," + Password);
                 if(isSuper)
                 {
+                    repo.AddMsg("DISCONNECT,<EOF>");
                     AckCommand ack = new AckCommand();
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;
-                    repo.AddMsg("DISCONNECT,<EOF>");
                 }
                 else
                 {

@@ -56,9 +56,13 @@ namespace Server
 
         public void SendReplies(ConnectRepo cr)
         {
-            while(run)
+            while(true)
             {
-                if(cr.msgQueue.IsEmpty) // we only need to send messages when there are messages in the queue
+                if(cr.msgQueue.IsEmpty && run == false) // we only need to send messages when there are messages in the queue
+                {
+                    break;
+                }
+                else if(cr.msgQueue.IsEmpty)
                 {
                     Thread.Sleep(500);
                     continue;
