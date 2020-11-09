@@ -93,14 +93,7 @@ namespace A05
                     }
                     else if(serverResponse[0] == "NACK")
                     {
-                        if (serverResponse[1] == "1")
-                        {
-                            chatWindow.Text += "Connection Failed - Account not Registered at " + currentConnection.ipAddress + "\n";
-                        }
-                        else
-                        {
-                            chatWindow.Text += "Connection Failed - Unknown Reason\n";
-                        }
+                        chatWindow.Text += "Connection Failed - " + serverResponse[1] + "\n"; 
                         currentConnection = null;
                     }
                     else
@@ -287,7 +280,7 @@ namespace A05
                 {
                     if (returnMessage[1] == "0")
                     {
-                        chatWindow.Text += "That account has already been registered at " + currentConnection.ipAddress +"\n";
+                        chatWindow.Text += "Registration Failed - " + returnMessage[1] + "\n";
                     }
                 }
                 else
