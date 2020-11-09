@@ -16,6 +16,8 @@ namespace Server
         private const int kBadPermisson = 3;
         private const int kError = 4;
         private const int kOK = 1;
+        private const int kNormalUser = 0;
+        private const int kSuperUser = 1;
         public string Name { get; set; }
         public IPAddress IP { get; set; }
         public string AckMsg { get; set; }
@@ -100,7 +102,14 @@ namespace Server
                     {
                         AckCommand ack = new AckCommand();
                         repo.Add(Name, c); // Add the new client into the repo
-                        AckMsg = ack.BuildProtocol(repo); // build the acknowledgement 
+                        if(fh.IsSuper(Name+","+Password))
+                        {
+                            AckMsg = ack.BuildProtocol(kSuperUser, repo); // build the acknowledgement for super user
+                        }
+                        else
+                        {
+                            AckMsg = ack.BuildProtocol(kNormalUser, repo); // build the acknowledgement for normal user
+                        }
 
                     }
                     else
@@ -132,6 +141,7 @@ namespace Server
             }
             else if(splitMsg[0] == "SHUTDOWN")
             {
+
                 bool isSuper = fh.IsSuper(Name + "," + Password);
                 if(isSuper)
                 {
