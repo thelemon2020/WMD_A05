@@ -84,16 +84,17 @@ namespace Server
                 Name = splitMsg[2]; // get the name from the incoming connect message
                 Password = splitMsg[3]; 
                 
-                if(fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
-                {
-                    MsgLog = fh.ReadLog();
-                    AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
-                    repo.Add(Name, c); // Add the new client into the repo
-                }
-                else
-                {
-                    AckMsg = ackOK.BuildProtocol(kFail);
-                }
+                //if(fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
+                //{
+                //    MsgLog = fh.ReadLog();
+                //    AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
+                    
+                //}
+                //else
+                //{
+                //    AckMsg = ackOK.BuildProtocol(kFail);
+                //}
+                repo.Add(Name, c); // Add the new client into the repo
             }
             else if(splitMsg[0] == "SEND")
             {
