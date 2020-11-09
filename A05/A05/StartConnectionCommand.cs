@@ -12,7 +12,7 @@ namespace A05
 {
     public class StartConnectionCommand : Command
     {
-        public byte[] password { get; set; }
+        public string password { get; set; }
         public IPAddress ipAddress { get; set; }
 
         public StartConnectionCommand(connection newConnection, IPAddress ip)
@@ -39,14 +39,16 @@ namespace A05
             createProtocol();
         }
 
-        private byte[] hashPassword(string password)
+        private string hashPassword(string password)
         {
             MD5 hasher = MD5.Create();
             byte[] originalPass = new byte[1024];
             byte[] hashPass = new byte[1024];
+            string hashString = "";
             originalPass = Encoding.ASCII.GetBytes(password);
             hashPass = hasher.ComputeHash(originalPass);
-            return hashPass;
+            hashString += Encoding.ASCII.GetString(hashPass, 0, hashPass.Length);
+            return hashString;
         }
 
         private void createProtocol()

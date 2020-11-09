@@ -10,8 +10,11 @@ namespace Server
 {
     public class Connection
     {
-        private const int kOK = 1;
-        private const int kFail = 0;
+        private const int kRegistered = 0;
+        private const int kNotRegister = 1;
+        private const int kIncomplete = 2;
+        private const int kBadPermisson = 3;
+        private const int kError = 4;
         public string Name { get; set; }
         public IPAddress IP { get; set; }
         public string AckMsg { get; set; }
@@ -61,48 +64,57 @@ namespace Server
             //Delegate which resulting command is necessary
             string[] splitMsg = recMsg.Split(',');
 
-            if(splitMsg[0] == "REGISTER") // Register command sent by user
+            if(splitMsg[splitMsg.Length - 1] != "<EOF>")
             {
-                AckCommand ack = new AckCommand();
-                Name = splitMsg[2];
-                Password = splitMsg[3];
-                if(!fh.CheckExist(Name, Password)) // if the user doesn't exist yet, create an entry for them on the file
+                NackCommand nack = new NackCommand();
+                AckMsg = nack.BuildProtocol(kIncomplete);
+            }
+            else if(splitMsg[0] == "REGISTER") // Register command sent by user
+            {
+                Name = splitMsg[1];
+                Password = splitMsg[2];
+                lock(lockObj)
                 {
-                    fh.WriteCredentials(Name + "," + Password);
-                    AckMsg = ack.BuildProtocol(kOK); // send an acknowledgment back
-                }
-                else // If the user exists already, then send back a NACK
-                {
-                    AckMsg = ack.BuildProtocol(kFail);
+                    if (!fh.CheckExist(Name, Password)) // if the user doesn't exist yet, create an entry for them on the file
+                    {
+                        AckCommand ack = new AckCommand();
+                        fh.WriteCredentials(Name + "," + Password);
+                        AckMsg = ack.BuildProtocol(); // send an acknowledgment back
+                    }
+                    else // If the user exists already, then send back a NACK
+                    {
+                        NackCommand nack = new NackCommand();
+                        AckMsg = nack.BuildProtocol(kRegistered);
+                    }
                 }
             }
             else if(splitMsg[0] == "CONNECT")
             {
-                // delegate the AckCommand
-                AckCommand ackOK = new AckCommand();
-                //IP = splitMsg[1]; // parse the IP address of the client 
                 Name = splitMsg[1]; // get the name from the incoming connect message
                 Password = splitMsg[2];
 
-                //if(fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
-                //{
-                //    MsgLog = fh.ReadLog();
-                //    AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
+                lock (lockObj)
+                {
+                    if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
+                    {
+                        AckCommand ack = new AckCommand();
+                        repo.Add(Name, c); // Add the new client into the repo
+                        AckMsg = ack.BuildProtocol(); // build the acknowledgement 
 
-                //}
-                //else
-                //{
-                //    AckMsg = ackOK.BuildProtocol(kFail);
-                //}
-                repo.Add(Name, c); // Add the new client into the repo
-                AckMsg = ackOK.BuildProtocol(kOK, repo);
+                    }
+                    else
+                    {
+                        NackCommand nack = new NackCommand();
+                        AckMsg = nack.BuildProtocol(kNotRegister);
+                    }
+                }
             }
             else if(splitMsg[0] == "SEND")
             {
                 // delegate the ReplyCommand
                 ReplyCommand reply = new ReplyCommand();
                 AckCommand ackOK = new AckCommand();
-                AckMsg = ackOK.BuildProtocol(kOK); // still need to send an ok acknowledgement that message was received
+                AckMsg = ackOK.BuildProtocol(); // still need to send an ok acknowledgement that message was received
                 string tmpMsg = reply.CheckMessage(splitMsg); // Since we split on commas, rebuild the message to not be split
                 ReplyMsg = reply.BuildProtocol(tmpMsg); // build the reply
                 repo.AddMsg(ReplyMsg); // Add the message that came in to the queue to be sent
@@ -117,15 +129,24 @@ namespace Server
             }
             else if(splitMsg[0] == "SHUTDOWN")
             {
-                string shutdownMessage = "DISCONNECT," + splitMsg[1] + "<EOF>";
-                repo.AddMsg(shutdownMessage);
-                ShutDown = true;
+                bool isSuper = fh.IsSuper(Name + "," + Password);
+                if(isSuper)
+                {
+                    AckCommand ack = new AckCommand();
+                    AckMsg = ack.BuildProtocol();
+                    ShutDown = true;
+                }
+                else
+                {
+                    NackCommand nack = new NackCommand();
+                    AckMsg = nack.BuildProtocol(kBadPermisson);
+                }
             }
             else
             {
                 // delegate Ack fail
-                AckCommand ackFail = new AckCommand();
-                AckMsg = ackFail.BuildProtocol(kFail);
+                NackCommand nack = new NackCommand();
+                AckMsg = nack.BuildProtocol(kError);
             }
         }
     }

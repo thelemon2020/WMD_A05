@@ -9,18 +9,12 @@ namespace Server
 {
     public class FileHandler
     {
-        private string msgLogPath;
         private string credentialPath;
+        private string super = "admin,!#/)zW??C?J\u000eJ?\u001f?"; // this is awful form, I know, not very secure
 
         public FileHandler()
         {
-            msgLogPath = "./log.txt";
             credentialPath = "./login.txt";
-            if(!File.Exists(msgLogPath))
-            {
-                var LogStream = File.Create(msgLogPath);
-                LogStream.Close();
-            }
 
             if(!File.Exists(credentialPath))
             {
@@ -29,31 +23,32 @@ namespace Server
             }
         }
 
-        public void WriteLog(string msg)
-        {
-            File.AppendAllText(msgLogPath, msg);
-        }
-
-        public string[] ReadLog()
-        {
-            string[] log = new string[1024]; // the log variable will hold 1024 lines of text
-            log = File.ReadAllLines(msgLogPath);
-            return log;
-        }
-
 
         public void WriteCredentials(string msg)
         {
             File.AppendAllText(credentialPath, msg);
         }
 
+        public bool IsSuper(string msg)
+        {
+            if(msg == super)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         public bool CheckExist(string user, string pw)
         {
+            string credentials = user + "," + pw;
             string[] lines = File.ReadAllLines(credentialPath); // get all lines from the password file
             foreach(string line in lines) // for every line retrieved from the password file
             {
-                if(line.Contains(user) && line.Contains(pw)) // check if the username and hashed password match
+                if(line.Contains(credentials)) // check if the username and hashed password match
                 {
                     return true; // If both fields match, return true, the user exists
                 }
