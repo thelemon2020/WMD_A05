@@ -193,10 +193,17 @@ namespace A05
             else
             {
                 string[] list = userList.Text.Split('\n');
+                int i = 0;
+                List<string> listOfCurrentUsers = new List<string>();
+                while (list[i] != "")
+                {
+                    listOfCurrentUsers.Add(list[i]);
+                    i++;
+                }
                 string newEntry = (string)str + "\n";
-                list.Append(newEntry);
-                Array.Sort(list);
-                foreach (string line in list)
+                listOfCurrentUsers.Add(newEntry);
+                listOfCurrentUsers.Sort();
+                foreach (string line in listOfCurrentUsers)
                 {
                     userList.Text += line;
                 }
