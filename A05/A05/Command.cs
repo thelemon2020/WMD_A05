@@ -21,21 +21,32 @@ namespace A05
         
         public string ExecuteCommand()
         {
-            NetworkStream serverStream = null;
-            StringBuilder serverResponse = new StringBuilder();
-            serverStream = InteractWithServer.connectToServer(serverIP, serverPort);
-            if (serverStream == null)
+            string serverResponse = "";
+            try
             {
-                serverResponse.Append(command);
-                serverResponse.Append(" Failed - Server Could Not Be Reached");
+                NetworkStream serverStream = null;
+              
+                serverStream = InteractWithServer.connectToServer(serverIP, serverPort);
+                if (serverStream == null)
+                {
+                    serverResponse += command + " Failed - Server Could Not Be Reached";
+                }
+                else
+                {
+                    InteractWithServer.writeToServer(serverStream, protocol.ToString());
+                    serverResponse = InteractWithServer.readFromServer(serverStream);
+                    InteractWithServer.closeConnection(serverStream);
+                    if (serverResponse.Contains("NACK"))
+                    {
+
+                    }
+                }
             }
-            else
+            catch
             {
-                InteractWithServer.writeToServer(serverStream, protocol.ToString());
-                serverResponse.Append(InteractWithServer.readFromServer(serverStream));
-                InteractWithServer.closeConnection(serverStream);
+                serverResponse = "Connection Failed - Server Could Not Be Reached";
             }
-            return serverResponse.ToString();
+            return serverResponse;
         }
     }
 

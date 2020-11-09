@@ -7,6 +7,7 @@
 * DESCRIPTION : This file defines the MainWindow UI class.  
 */using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -71,14 +72,18 @@ namespace A05
                 if (currentConnection != null)
                 {
                     StartConnectionCommand startUp = new StartConnectionCommand(currentConnection, currentConnection.ipAddress);
-                    string serverResponse = startUp.ExecuteCommand();
-                    if (serverResponse != "")
+                    string[] serverResponse = startUp.ExecuteCommand().Split(',');
+                    if (serverResponse[0] == "ACK")
                     {
                         isConnected = true;
-
                         string connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
                         chatWindow.Text += connectedMessage;
-                        userList.Text += currentConnection.username + "\n";
+                        int i = 2;
+                        while (serverResponse[i] != "<EOF>")
+                        {
+                            userList.Text += serverResponse[i] + "\n";
+                            i++;
+                        }
                         userInput.IsEnabled = true;
                         SubmitMessage.IsEnabled = true;
                         MenuDisconnect.IsEnabled = true;
@@ -86,9 +91,21 @@ namespace A05
                         Thread checkForNewMessages = new Thread(listenForMessages);
                         checkForNewMessages.Start();
                     }
+                    else if(serverResponse[0] == "NACK")
+                    {
+                        if (serverResponse[1] == "1")
+                        {
+                            chatWindow.Text += "Connection Failed - Account not Registered at " + currentConnection.ipAddress + "\n";
+                        }
+                        else
+                        {
+                            chatWindow.Text += "Connection Failed - Unknown Reason\n";
+                        }
+                        currentConnection = null;
+                    }
                     else
                     {
-                        chatWindow.Text += serverResponse + "\n";
+                        chatWindow.Text += serverResponse[0];
                     }
                 }
             }
@@ -132,7 +149,7 @@ namespace A05
             }
             else if (arguments[0] == "DISCONNECT")
             { 
-                shutDownServer();
+                shutDownServer(arguments);
             }
             else if (arguments[0] == "ADD")
             {
@@ -183,7 +200,7 @@ namespace A05
             var dispatcher = userList.Dispatcher;
             if (!dispatcher.CheckAccess())
             {
-                MyCallback callback = new MyCallback(addUser);
+                MyCallback callback = new MyCallback(removeUser);
                 dispatcher.Invoke(callback, new object[] { str });
             }
             else
@@ -207,16 +224,53 @@ namespace A05
         {
             DisconnectCommand disconnect = new DisconnectCommand(currentConnection);
             disconnect.ExecuteCommand();
-            shutDownServer();
+            shutDownServer(disconnect);
         }
-        public void shutDownServer()
+        public void shutDownServer(Object str)
         {
+            var dispatcher = chatWindow.Dispatcher;
+            if (!dispatcher.CheckAccess())
+            {
+                MyCallback callback = new MyCallback(shutDownServer);
+                dispatcher.Invoke(callback);
+            }
+            else
+            {
+                chatWindow.Text += "Disconnected from server at " + currentConnection.ipAddress + "\n";
+            }
+            dispatcher = MenuDisconnect.Dispatcher;
             isConnected = false;
             currentConnection = null;
-            userInput.Text = "";
-            userInput.IsEnabled = false;
-            MenuDisconnect.IsEnabled = false;
-            userList.Text = "";
+            if (!dispatcher.CheckAccess())
+            {
+                MyCallback callback = new MyCallback(shutDownServer);
+                dispatcher.Invoke(callback);
+            }
+            else
+            {
+                MenuDisconnect.IsEnabled = false;
+            }
+            dispatcher = MenuConnect.Dispatcher;
+            if (!dispatcher.CheckAccess())
+            {
+                MyCallback callback = new MyCallback(shutDownServer);
+                dispatcher.Invoke(callback);
+            }
+            else
+            {
+                MenuConnect.IsEnabled = true;
+            }
+            dispatcher = userList.Dispatcher;
+            if (!dispatcher.CheckAccess())
+            {
+                MyCallback callback = new MyCallback(shutDownServer);
+                dispatcher.Invoke(callback);
+            }
+            else
+            {
+                userList.Text = "";
+            }
+            
         }
 
         private void Register_Click(object sender, RoutedEventArgs e)
@@ -228,7 +282,14 @@ namespace A05
                 connection currentConnection = new connection(reg.username, reg.userPassword,
                     reg.ipAddress, reg.port);
                 RegisterCommand regComm = new RegisterCommand(currentConnection, currentConnection.ipAddress);
-                string returnMessage = regComm.ExecuteCommand();
+                string[] returnMessage = regComm.ExecuteCommand().Split(',');
+                if (returnMessage[0] == "NACK")
+                {
+                    if (returnMessage[1] == "0")
+                    {
+                        chatWindow.Text += "That account has already been registered at " + currentConnection.ipAddress +"\n";
+                    }
+                }
             }
             reg.Close();
         }
