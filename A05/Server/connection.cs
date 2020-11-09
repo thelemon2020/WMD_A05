@@ -13,7 +13,7 @@ namespace Server
         private const int kOK = 1;
         private const int kFail = 0;
         public string Name { get; set; }
-        public string IP { get; set; }
+        public IPAddress IP { get; set; }
         public string AckMsg { get; set; }
         public string ReplyMsg { get; set; }
         public bool ShutDown { get; set; }
@@ -80,7 +80,7 @@ namespace Server
             {
                 // delegate the AckCommand
                 AckCommand ackOK = new AckCommand();
-                IP = splitMsg[1]; // parse the IP address of the client 
+                //IP = splitMsg[1]; // parse the IP address of the client 
                 Name = splitMsg[2]; // get the name from the incoming connect message
                 Password = splitMsg[3];
 
