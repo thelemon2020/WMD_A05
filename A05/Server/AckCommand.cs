@@ -38,10 +38,6 @@ namespace Server
             {
                 protocol.Append(okMsg);
             }
-            else
-            {
-                protocol.Append(failMsg);
-            }
             protocol.Append(",");
             foreach (KeyValuePair<string, Connection> entry in repo.repo)
             {
