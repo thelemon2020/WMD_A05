@@ -45,6 +45,11 @@ namespace Server
             clientConnection.IP = IP;
             clientConnection.Send(clientConnection.AckMsg, stream); // send back an acknowledgement of receiving
 
+            if(clientConnection.ShutDown == true)
+            {
+                run = false;
+            }
+
             stream.Close(); // close the stream then close the connection. no need to keep them open any longer
             client.Close();
         }
@@ -81,11 +86,6 @@ namespace Server
 
                                 tmpStream.Close();
                                 tmpClient.Close();
-
-                                if(entry.Value.ShutDown == true) // if the shut down command is given, finish sending all messages
-                                {                                // then stop the server.
-                                    run = false;
-                                }
                             }
 
                         }

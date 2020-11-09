@@ -159,7 +159,8 @@ namespace Server
             }
             else if(splitMsg[0] == "SHUTDOWN")
             {
-
+                Name = splitMsg[1];
+                Password = splitMsg[2];
                 bool isSuper = fh.IsSuper(Name + "," + Password);
                 if(isSuper)
                 {
