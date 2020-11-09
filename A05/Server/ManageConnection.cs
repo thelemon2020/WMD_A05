@@ -37,7 +37,7 @@ namespace Server
             
             recMsg = clientConnection.Receive(stream); // get the communication from the client
             clientConnection.Parse(recMsg, clientConnection); // parse the command
-
+            clientConnection.IP = client.Client.RemoteEndPoint.ToString();
             clientConnection.Send(clientConnection.AckMsg, stream); // send back an acknowledgement of receiving
 
             stream.Close(); // close the stream then close the connection. no need to keep them open any longer
