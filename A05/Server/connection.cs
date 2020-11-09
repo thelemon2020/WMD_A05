@@ -138,6 +138,8 @@ namespace Server
             {
                 Name = splitMsg[1];
                 repo.Remove(Name);
+                AckCommand ack = new AckCommand();
+                AckMsg = ack.BuildProtocol();
             }
             else if(splitMsg[0] == "SHUTDOWN")
             {
