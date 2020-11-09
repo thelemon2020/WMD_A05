@@ -42,8 +42,15 @@ namespace Server
         {
             //package the message up into bytes, and then send on the current client stream
             byte[] msgBytes = Encoding.ASCII.GetBytes(msg);
-            stream.Write(msgBytes, 0, msgBytes.Length);
-            stream.Flush();
+            try
+            {
+                stream.Write(msgBytes, 0, msgBytes.Length);
+                stream.Flush();
+            }
+            catch(SocketException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
         
 
@@ -54,9 +61,16 @@ namespace Server
             int bytesRec = 0;
             string msgRec = "";
 
-            bytesRec = stream.Read(incomingData, 0, incomingData.Length);
-            msgRec += Encoding.ASCII.GetString(incomingData, 0, bytesRec);
-            stream.Flush();
+            try
+            {
+                bytesRec = stream.Read(incomingData, 0, incomingData.Length);
+                msgRec += Encoding.ASCII.GetString(incomingData, 0, bytesRec);
+                stream.Flush();
+            }
+            catch(SocketException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
 
             return msgRec;
         }
