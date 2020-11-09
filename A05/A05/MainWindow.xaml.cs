@@ -199,7 +199,7 @@ namespace A05
                 List<string> listOfCurrentUsers = new List<string>();
                 while (list[i] != "")
                 {
-                    listOfCurrentUsers.Add(list[i]);
+                    listOfCurrentUsers.Add(list[i] + '\n');
                     i++;
                 }
                 string newEntry = (string)str + "\n";
