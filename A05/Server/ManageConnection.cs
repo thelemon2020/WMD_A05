@@ -18,6 +18,7 @@ namespace Server
         public ManageConnection(ConnectRepo cr)
         {
             repo = cr;
+            lockobj = new object();
         }
 
         public void Connect(TcpListener listener)

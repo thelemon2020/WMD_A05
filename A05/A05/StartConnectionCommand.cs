@@ -56,8 +56,6 @@ namespace A05
             protocol = new StringBuilder();
             protocol.Append(command);
             protocol.Append(',');
-            protocol.Append(ipAddress); // added this in for the IP when doing the initial connect
-            protocol.Append(',');
             protocol.Append(userName);
             protocol.Append(',');
             protocol.Append(password);

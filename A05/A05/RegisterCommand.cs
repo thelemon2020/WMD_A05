@@ -12,7 +12,5 @@ namespace A05
         public RegisterCommand(connection newConnection, IPAddress ip) : base(newConnection, ip, "REGISTER") 
         {
         }
-
-        //public string
     } 
 }
