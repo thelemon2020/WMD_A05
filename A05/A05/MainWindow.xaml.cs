@@ -91,7 +91,7 @@ namespace A05
                         List<string> listOfUsers = new List<string>();
                         while (serverResponse[i] != "<EOF>")
                         {
-                            listOfUsers.Append(serverResponse[i] + "\n");
+                            listOfUsers.Add(serverResponse[i] + "\n");
                             i++;
                         }
                         listOfUsers.Sort();
