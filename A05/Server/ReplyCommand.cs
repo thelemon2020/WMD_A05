@@ -40,9 +40,14 @@ namespace Server
             }
             string tmpMsg = "";
 
-            for (int i = 0; i < endIndex; i++)
+            for (int i = 1; i < endIndex; i++)
             {
+                if (i != 1)
+                {
+                    tmpMsg += ", ";
+                }
                 tmpMsg += splitMsg[i];
+                
             }
 
             return tmpMsg;
