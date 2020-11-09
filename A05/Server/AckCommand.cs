@@ -27,13 +27,15 @@ namespace Server
             return tmpMsg;
         }
 
-        public string BuildProtocol(ConnectRepo repo)
+        public string BuildProtocol(int flag, ConnectRepo repo)
         {
             string tmpMsg = "";
 
             protocol.Append(header); // build the acknowledgement so it's ready to send
             protocol.Append(",");
             protocol.Append(okMsg);
+            protocol.Append(",");
+            protocol.Append(flag);
             protocol.Append(",");
             foreach (KeyValuePair<string, Connection> entry in repo.repo)
             {
