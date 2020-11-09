@@ -20,6 +20,7 @@ namespace Server
             {
                 var pwStream = File.Create(credentialPath);
                 pwStream.Close();
+                WriteCredentials(super);
             }
         }
 
