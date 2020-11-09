@@ -167,7 +167,6 @@ namespace Server
                 bool isSuper = fh.IsSuper(Name + "," + Password);
                 if(isSuper)
                 {
-                    repo.AddMsg("DISCONNECT,<EOF>");
                     AckCommand ack = new AckCommand();
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;

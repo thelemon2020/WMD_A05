@@ -47,6 +47,8 @@ namespace Server
 
             if(clientConnection.ShutDown == true)
             {
+                repo.AddMsg("DISCONNECT,<EOF>");
+                Thread.Sleep(3000);
                 run = false;
             }
 

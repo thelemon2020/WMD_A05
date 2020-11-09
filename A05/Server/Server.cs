@@ -48,6 +48,9 @@ namespace Server
                 manager.Connect(listener);
                 Console.WriteLine("Connected!");
             }
+            listener.Stop();
+            Console.WriteLine("Server stopped. . .\nPress any key to continue.");
+            Console.ReadLine();
         }
     }
 }
