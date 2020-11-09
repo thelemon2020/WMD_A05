@@ -88,7 +88,7 @@ namespace A05
                     }
                     else
                     {
-                        chatWindow.Text += serverResponse;
+                        chatWindow.Text += serverResponse + "\n";
                     }
                 }
             }
