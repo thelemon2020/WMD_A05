@@ -79,10 +79,16 @@ namespace A05
                         string connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
                         chatWindow.Text += connectedMessage;
                         int i = 2;
+                        string[] listOfUsers = null;
                         while (serverResponse[i] != "<EOF>")
                         {
-                            userList.Text += serverResponse[i] + "\n";
+                            listOfUsers.Append(serverResponse[i] + "\n");
                             i++;
+                        }
+                        Array.Sort(listOfUsers);
+                        foreach (string user in listOfUsers)
+                        {
+                            userList.Text += user;
                         }
                         userInput.IsEnabled = true;
                         SubmitMessage.IsEnabled = true;
