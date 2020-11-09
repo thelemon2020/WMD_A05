@@ -11,7 +11,7 @@ namespace Server
         private const string header = "REPLY";
         private const string footer = "<EOF>";
 
-        public string BuildProtocol(string sender, string message)
+        public string BuildProtocol(string message)
         {
             string tmpMsg = "";
             protocol.Append(header);

@@ -104,8 +104,7 @@ namespace Server
                 AckCommand ackOK = new AckCommand();
                 AckMsg = ackOK.BuildProtocol(kOK); // still need to send an ok acknowledgement that message was received
                 string tmpMsg = reply.CheckMessage(splitMsg); // Since we split on commas, rebuild the message to not be split
-                Name = splitMsg[1]; // get the name from the message header
-                ReplyMsg = reply.BuildProtocol(Name, tmpMsg); // build the reply
+                ReplyMsg = reply.BuildProtocol(tmpMsg); // build the reply
                 repo.AddMsg(ReplyMsg); // Add the message that came in to the queue to be sent
             }
             else if(splitMsg[0] == "ACK")
