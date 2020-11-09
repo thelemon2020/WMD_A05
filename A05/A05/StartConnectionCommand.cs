@@ -22,15 +22,7 @@ namespace A05
             serverIP = newConnection.ipAddress;
             serverPort = newConnection.serverPort;
             command = "CONNECT";
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ips in host.AddressList)
-            {
-                if (ips.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    ipAddress = ips;
-                    break;
-                }
-            }
+            ipAddress = ip;
 
             createProtocol();
         }

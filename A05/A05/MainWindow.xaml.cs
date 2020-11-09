@@ -154,7 +154,7 @@ namespace A05
             }
             else
             {
-                chatWindow.Text += userMessage[1] + ">" + userMessage[2];
+                chatWindow.Text += userMessage[1] + ">" + userMessage[2] + "\n";
             }
         }
         private void addUser(Object str)

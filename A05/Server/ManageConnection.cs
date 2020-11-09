@@ -23,6 +23,7 @@ namespace Server
         public void Connect(TcpListener listener)
         {
             TcpClient client = listener.AcceptTcpClient(); // Accept a new client
+            string isthisright = client.Client.RemoteEndPoint.ToString();
             Thread clientThread = new Thread(() => HandleClient(client, repo)); // Create a delegate for the client thread to run on
             clientThread.Start();
         }
