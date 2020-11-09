@@ -57,9 +57,11 @@ namespace Server
                 {
                     foreach (string msg in repo.msgQueue) // send all the message that are in the queue 
                     {
+                        string[] split = msg.Split(','); // split this up so we can grab the sender of the message
+
                         foreach (KeyValuePair<string, Connection> entry in repo.repo) // send message to all other clients
                         {
-                            if (entry.Key != entry.Value.Name) // don't send the message to the sender
+                            if (split[1] != entry.Value.Name) // don't send the message to the sender
                             {
                                 string recMsg = "";
                                 TcpClient tmpClient = new TcpClient(); // server acts like client and connects to client's listener thread
