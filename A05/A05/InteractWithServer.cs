@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* FILE : InteractWithServer.cs
+* PROJECT : PROG2121 - Assignment #5
+* PROGRAMMER : Chris Lemon
+* FIRST VERSION : 2020 - 11 - 02 
+* REVISED ON : 2020 - 11 - 08
+* DESCRIPTION : This file defines the InteractWithServer class
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,8 +18,23 @@ using System.Windows.Navigation;
 
 namespace A05
 {
+  /*
+   * NAME : InteractWithServer
+   * PURPOSE : This defines the InteractWithServer class.  It is a static class that holds methods that help other parts of the client
+   *            interact with the server, through sending and receiving data
+   */
    static public class InteractWithServer
-    {
+    {   
+       /*
+        * METHOD : connectToServer()
+        *
+        * DESCRIPTION : This method takes an IP and Port and opens a connection to that server and returns a stream to that server
+        *
+        * PARAMETERS : serverIp - IP of the server
+        *              serverPort - Port of the server
+        *
+        * RETURNS : serverStream - the network stream to the server
+        */
         static public NetworkStream connectToServer(IPAddress serverIP, int serverPort)
         {
             NetworkStream serverStream = null;
@@ -20,11 +43,31 @@ namespace A05
             serverStream = server.GetStream();
             return serverStream;
         }
+        /*
+        * METHOD :writeToServer()
+        *
+        * DESCRIPTION : This method takes a network stream and sends a protocol through it
+        *
+        * PARAMETERS : serverStream - the network stream to write to
+        *              protocol - the string to send to the server
+        *
+        * RETURNS : Nothing
+        */
         static public void writeToServer(NetworkStream serverStream, string protocol)
         {
             byte[] dataSent = Encoding.ASCII.GetBytes(protocol.ToString()); // package the data to send into bytes for the stream           
             serverStream.Write(dataSent, 0, dataSent.Length); // write the bytes to the stream
         }
+        /*
+       * METHOD :readFromServer()
+       *
+       * DESCRIPTION : This method receives data from a network stream
+       *
+       * PARAMETERS : serverStream - the network stream to write to
+       *              protocol - the string to send to the server
+       *
+       * RETURNS : serverStream - the network stream to the server
+       */
         static public string readFromServer(NetworkStream serverStream)
         {
             string recievedData = null;
