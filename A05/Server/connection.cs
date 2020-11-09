@@ -98,7 +98,7 @@ namespace Server
                         AckCommand ack = new AckCommand();
                         fh.WriteCredentials(Name + "," + Password);
                         AckMsg = ack.BuildProtocol(); // send an acknowledgment back
-                        repo.AddMsg("DISCONNECT,<EOF>");
+                        Console.WriteLine("{0} Has Registered", Name);
                     }
                     else // If the user exists already, then send back a NACK
                     {
@@ -126,7 +126,7 @@ namespace Server
                         {
                             AckMsg = ack.BuildProtocol(kNormalUser, repo); // build the acknowledgement for normal user
                         }
-
+                        Console.WriteLine("User {0} Connected", Name);
                     }
                     else
                     {
@@ -145,19 +145,21 @@ namespace Server
                 string tmpMsg = reply.CheckMessage(splitMsg); // Since we split on commas, rebuild the message to not be split
                 ReplyMsg = reply.BuildProtocol(tmpMsg); // build the reply
                 repo.AddMsg(ReplyMsg); // Add the message that came in to the queue to be sent
+                Console.WriteLine("{0} Sent: {1}", Name, splitMsg[2]);
             }
             else if(splitMsg[0] == "ACK")
             {
                 return; // If the client sends an acknowledgement of reply received, don't need to do anything as of now
             }
-            else if(splitMsg[0] == "DISCONNECT") // if a super user sends the server shut off command
+            else if(splitMsg[0] == "DISCONNECT") 
             {
                 Name = splitMsg[1];
                 repo.Remove(Name);
                 AckCommand ack = new AckCommand();
                 AckMsg = ack.BuildProtocol();
+                Console.WriteLine("User {0} Disconnected", Name);
             }
-            else if(splitMsg[0] == "SHUTDOWN")
+            else if(splitMsg[0] == "SHUTDOWN") // if a super user sends the server shut off command
             {
                 Name = splitMsg[1];
                 Password = splitMsg[2];
@@ -167,6 +169,7 @@ namespace Server
                     AckCommand ack = new AckCommand();
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;
+                    Console.WriteLine("{0} Shutdown the Server");
                 }
                 else
                 {
