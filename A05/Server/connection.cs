@@ -115,6 +115,7 @@ namespace Server
                 // delegate the ReplyCommand
                 ReplyCommand reply = new ReplyCommand();
                 AckCommand ackOK = new AckCommand();
+                Name = splitMsg[1];
                 AckMsg = ackOK.BuildProtocol(); // still need to send an ok acknowledgement that message was received
                 string tmpMsg = reply.CheckMessage(splitMsg); // Since we split on commas, rebuild the message to not be split
                 ReplyMsg = reply.BuildProtocol(tmpMsg); // build the reply
@@ -126,6 +127,7 @@ namespace Server
             }
             else if(splitMsg[0] == "DISCONNECT") // if a super user sends the server shut off command
             {
+                Name = splitMsg[1];
                 repo.Remove(Name);
             }
             else if(splitMsg[0] == "SHUTDOWN")

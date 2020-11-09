@@ -33,8 +33,9 @@ namespace Server
             // In this handle client method, the server doesn't need to keep this in a loop
             // The server simply gets a connection receives a message, sends an acknowledgment and then closes connection
             string recMsg;
-            string endPoint = client.Client.RemoteEndPoint.ToString();
+            string endPoint = client.Client.RemoteEndPoint.ToString(); // do these 3 steps to get the IP of the client
             string[] ip = endPoint.Split(':');
+
             Connection clientConnection = new Connection(repo, lockobj); // create a new connection class for each client thread
             NetworkStream stream = client.GetStream(); // Open the network stream to the current client thread.
             
