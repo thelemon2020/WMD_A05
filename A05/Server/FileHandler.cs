@@ -56,10 +56,5 @@ namespace Server
             }
             return false; // if the username and password mix is not found, return false
         }
-
-        //public string FormatForLog(string msg)
-        //{
-
-        //}
     }
 }
