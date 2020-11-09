@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -11,7 +12,6 @@ namespace A05
 {
     public class StartConnectionCommand : Command
     {
-        public string userName { get; set; }
         public byte[] password { get; set; }
         public IPAddress ipAddress { get; set; }
 
@@ -22,7 +22,16 @@ namespace A05
             serverIP = newConnection.ipAddress;
             serverPort = newConnection.serverPort;
             command = "CONNECT";
-            ipAddress = ip;
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ips in host.AddressList)
+            {
+                if (ips.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipAddress = ips;
+                    break;
+                }
+            }
+
             createProtocol();
         }
 
@@ -34,6 +43,7 @@ namespace A05
             serverPort = newConnection.serverPort;
             command = userCommand;
             ipAddress = ip;
+         
             createProtocol();
         }
 

@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*
+* FILE : MainWindow.xaml.cs
+* PROJECT : PROG2121 - Assignment #5
+* PROGRAMMER : Chris Lemon
+* FIRST VERSION : 2020 - 11 - 02 
+* REVISED ON : 2020 - 11 - 08
+* DESCRIPTION : This file defines the MainWindow UI class.  
+*/using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -20,29 +27,45 @@ using System.Windows.Shapes;
 
 namespace A05
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+
+   /*
+    * NAME : MainWindow
+    * PURPOSE : This is the main window for the client portion of the chat program.  it holds the logic for listening for registering, connecting
+    *           recieiving, sending and updating the chat window itself 
+    */
     public partial class MainWindow : Window
     {
+        //properties
         public bool isConnected { get; set; }
         public connection currentConnection { get; set; }
 
         delegate void MyCallback(Object obj);
 
-
         public MainWindow()
         {
             InitializeComponent();
         }
-
+       /*
+        * METHOD : Connect_Click()
+        *
+        * DESCRIPTION : This method is triggered when the user clicks the Connect To Server button.  It creates a instance of ConnectWindow
+        *               and creates a ConnectCommand to send off to the chat server.
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the routed event
+        *
+        * RETURNS : Nothing
+        */
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
+            //start instance of connectWindow
             ConnectWindow newConnection = new ConnectWindow();
             newConnection.Owner = this;
             newConnection.ShowDialog();
+            //if user fills it out properly and clicks connect
             if (newConnection.canProceed == true)
             {
+                //class to hold the connection details for this chat server
                 currentConnection = new connection(newConnection.username, newConnection.userPassword,
                     newConnection.ipAddress, newConnection.port);
                 if (currentConnection != null)
