@@ -290,6 +290,11 @@ namespace A05
                         chatWindow.Text += "That account has already been registered at " + currentConnection.ipAddress +"\n";
                     }
                 }
+                else
+                {
+                    chatWindow.Text += "Successfully registered account at " + currentConnection.ipAddress + "\n";
+                }
+                currentConnection = null;
             }
             reg.Close();
         }
