@@ -10,6 +10,7 @@ namespace Server
     public class FileHandler
     {
         private string credentialPath;
+        private string super = "admin,!#/)zW??C?J\u000eJ?\u001f?"; // this is awful form, I know, not very secure
 
         public FileHandler()
         {
@@ -26,6 +27,18 @@ namespace Server
         public void WriteCredentials(string msg)
         {
             File.AppendAllText(credentialPath, msg);
+        }
+
+        public bool IsSuper(string msg)
+        {
+            if(msg == super)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 

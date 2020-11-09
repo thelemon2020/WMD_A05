@@ -13,6 +13,6 @@ namespace A05
         {
         }
 
-        public string
+        //public string
     } 
 }

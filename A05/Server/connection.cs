@@ -13,7 +13,8 @@ namespace Server
         private const int kRegistered = 0;
         private const int kNotRegister = 1;
         private const int kIncomplete = 2;
-        private const int kError = 3;
+        private const int kBadPermisson = 3;
+        private const int kError = 4;
         public string Name { get; set; }
         public IPAddress IP { get; set; }
         public string AckMsg { get; set; }
@@ -72,16 +73,19 @@ namespace Server
             {
                 Name = splitMsg[1];
                 Password = splitMsg[2];
-                if(!fh.CheckExist(Name, Password)) // if the user doesn't exist yet, create an entry for them on the file
+                lock(lockObj)
                 {
-                    AckCommand ack = new AckCommand();
-                    fh.WriteCredentials(Name + "," + Password);
-                    AckMsg = ack.BuildProtocol(); // send an acknowledgment back
-                }
-                else // If the user exists already, then send back a NACK
-                {
-                    NackCommand nack = new NackCommand();
-                    AckMsg = nack.BuildProtocol(kRegistered);
+                    if (!fh.CheckExist(Name, Password)) // if the user doesn't exist yet, create an entry for them on the file
+                    {
+                        AckCommand ack = new AckCommand();
+                        fh.WriteCredentials(Name + "," + Password);
+                        AckMsg = ack.BuildProtocol(); // send an acknowledgment back
+                    }
+                    else // If the user exists already, then send back a NACK
+                    {
+                        NackCommand nack = new NackCommand();
+                        AckMsg = nack.BuildProtocol(kRegistered);
+                    }
                 }
             }
             else if(splitMsg[0] == "CONNECT")
@@ -89,17 +93,20 @@ namespace Server
                 Name = splitMsg[1]; // get the name from the incoming connect message
                 Password = splitMsg[2];
 
-                if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
+                lock (lockObj)
                 {
-                    AckCommand ack = new AckCommand();
-                    repo.Add(Name, c); // Add the new client into the repo
-                    AckMsg = ack.BuildProtocol(); // build the acknowledgement 
+                    if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
+                    {
+                        AckCommand ack = new AckCommand();
+                        repo.Add(Name, c); // Add the new client into the repo
+                        AckMsg = ack.BuildProtocol(); // build the acknowledgement 
 
-                }
-                else
-                {
-                    NackCommand nack = new NackCommand();
-                    AckMsg = nack.BuildProtocol(kNotRegister);
+                    }
+                    else
+                    {
+                        NackCommand nack = new NackCommand();
+                        AckMsg = nack.BuildProtocol(kNotRegister);
+                    }
                 }
             }
             else if(splitMsg[0] == "SEND")
@@ -122,8 +129,18 @@ namespace Server
             }
             else if(splitMsg[0] == "SHUTDOWN")
             {
-
-                ShutDown = true;
+                bool isSuper = fh.IsSuper(Name + "," + Password);
+                if(isSuper)
+                {
+                    AckCommand ack = new AckCommand();
+                    AckMsg = ack.BuildProtocol();
+                    ShutDown = true;
+                }
+                else
+                {
+                    NackCommand nack = new NackCommand();
+                    AckMsg = nack.BuildProtocol(kBadPermisson);
+                }
             }
             else
             {

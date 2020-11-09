@@ -11,6 +11,7 @@ namespace Server
         const string NotRegister = "You Have Not Registered Yet.";
         const string Registered = "This User Has Already Been Registered";
         const string Incomplete = "Incomplete Data Received.";
+        const string BadPermission = "You Don't Have Permission To Do This.";
         const string Error = "There Was a Problem With The Data Received.";
         const string Header = "NACK";
         const string Footer = "<EOF>";
@@ -31,6 +32,10 @@ namespace Server
             else if(reason == 2)
             {
                 protocol.Append(Incomplete);
+            }
+            else if(reason == 3)
+            {
+                protocol.Append(BadPermission);
             }
             else
             {
