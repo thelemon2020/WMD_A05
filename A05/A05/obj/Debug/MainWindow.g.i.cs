@@ -41,6 +41,14 @@ namespace A05 {
     public partial class MainWindow : System.Windows.Window, System.Windows.Markup.IComponentConnector {
         
         
+        #line 14 "..\..\MainWindow.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.MenuItem MenuConnect;
+        
+        #line default
+        #line hidden
+        
+        
         #line 15 "..\..\MainWindow.xaml"
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
         internal System.Windows.Controls.MenuItem MenuDisconnect;
@@ -127,9 +135,10 @@ namespace A05 {
             #line hidden
             return;
             case 2:
+            this.MenuConnect = ((System.Windows.Controls.MenuItem)(target));
             
             #line 14 "..\..\MainWindow.xaml"
-            ((System.Windows.Controls.MenuItem)(target)).Click += new System.Windows.RoutedEventHandler(this.Connect_Click);
+            this.MenuConnect.Click += new System.Windows.RoutedEventHandler(this.Connect_Click);
             
             #line default
             #line hidden

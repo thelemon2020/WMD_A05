@@ -55,9 +55,11 @@ namespace A05
 
                         string connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
                         chatWindow.Text += connectedMessage;
-                        userList.Text += currentConnection.username;
+                        userList.Text += currentConnection.username + "\n";
                         userInput.IsEnabled = true;
                         SubmitMessage.IsEnabled = true;
+                        MenuDisconnect.IsEnabled = true;
+                        MenuConnect.IsEnabled = true;
                         Thread checkForNewMessages = new Thread(listenForMessages);
                         checkForNewMessages.Start();
                     }
@@ -129,7 +131,7 @@ namespace A05
             }
             else
             {
-                chatWindow.Text += userMessage[1] + "> " + userMessage[2];
+                chatWindow.Text += userMessage[1] + ">" + userMessage[2];
             }
         }
         private void addUser(Object str)
@@ -142,7 +144,7 @@ namespace A05
             }
             else
             {
-                string[] list = userList.Text.Split(',');
+                string[] list = userList.Text.Split('\n');
                 list.Append((string) str + '\n');
                 Array.Sort(list);
                 userList.Text = list.ToString();
@@ -170,7 +172,7 @@ namespace A05
             {
                 SendMessageCommand messageToSend = new SendMessageCommand(currentConnection, userInput.Text);
                 messageToSend.ExecuteCommand();
-                chatWindow.Text += (currentConnection.username + "> " + userInput.Text + "\n");
+                chatWindow.Text += (currentConnection.username + ">" + userInput.Text + "\n");
                 userInput.Text = "";              
             }
         }
