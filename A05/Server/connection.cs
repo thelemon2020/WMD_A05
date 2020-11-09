@@ -15,6 +15,7 @@ namespace Server
         private const int kIncomplete = 2;
         private const int kBadPermisson = 3;
         private const int kError = 4;
+        private const int kOK = 1;
         public string Name { get; set; }
         public IPAddress IP { get; set; }
         public string AckMsg { get; set; }
@@ -99,7 +100,7 @@ namespace Server
                     {
                         AckCommand ack = new AckCommand();
                         repo.Add(Name, c); // Add the new client into the repo
-                        AckMsg = ack.BuildProtocol(); // build the acknowledgement 
+                        AckMsg = ack.BuildProtocol(kOK, repo); // build the acknowledgement 
 
                     }
                     else
