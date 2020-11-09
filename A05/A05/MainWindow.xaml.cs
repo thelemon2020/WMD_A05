@@ -249,6 +249,10 @@ namespace A05
         }
         private void disconnectFromServer(object sender, RoutedEventArgs e)
         {
+            startShutDownProcess();
+        }
+        private void startShutDownProcess()
+        {
             DisconnectCommand disconnect = new DisconnectCommand(currentConnection);
             disconnect.ExecuteCommand();
             shutDownServer(disconnect);
@@ -364,7 +368,7 @@ namespace A05
         {
             if (currentConnection != null)
             {
-                //disconnectFromServer();
+                startShutDownProcess();
             }
         }
     }

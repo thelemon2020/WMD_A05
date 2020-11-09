@@ -167,7 +167,6 @@ namespace Server
                     AckCommand ack = new AckCommand();
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;
-                    
                 }
                 else
                 {
