@@ -103,7 +103,7 @@ namespace A05
         {                    
             if (arguments[0] == "REPLY")
             {
-                changeChatWindow(arguments[1]);
+                changeChatWindow(arguments);
             }
             else if (arguments[0] == "DISCONNECT")
             { 
@@ -120,6 +120,7 @@ namespace A05
         }
         private void changeChatWindow(Object str)
         {
+            string[] userMessage = (string[])str;
             var dispatcher = chatWindow.Dispatcher;
             if (!dispatcher.CheckAccess())
             {
@@ -128,7 +129,7 @@ namespace A05
             }
             else
             {
-                chatWindow.Text += (string)str;
+                chatWindow.Text += userMessage[1] + "> " + userMessage[2];
             }
         }
         private void addUser(Object str)
