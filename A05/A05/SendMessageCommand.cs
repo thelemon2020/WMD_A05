@@ -16,6 +16,7 @@ namespace A05
         {
             serverIP = currentConnection.ipAddress;
             serverPort = currentConnection.serverPort;
+            userMessage = currentConnection.username;
             message = userMessage;
             command = "SEND";
             createProtocol();
@@ -24,6 +25,8 @@ namespace A05
         {
             protocol = new StringBuilder();
             protocol.Append(command);
+            protocol.Append(',');
+            protocol.Append(userName);
             protocol.Append(',');
             protocol.Append(message);
             protocol.Append(',');

@@ -14,6 +14,7 @@ namespace A05
         public string header { get; set; }
         public string command { get; set; }
         public string footer { get; set; }
+        public string userName {get; set;}
         public IPAddress serverIP { get; set; }
         public int serverPort { get; set; }
         public StringBuilder protocol { get; set; }

@@ -14,11 +14,14 @@ namespace A05
             command = "DISCONNECT";
             serverIP = currentConnection.ipAddress;
             serverPort = currentConnection.serverPort;
+            userName = currentConnection.username;
         }
         private void createProtocol()
         {
             protocol = new StringBuilder();
             protocol.Append(command);
+            protocol.Append(',');
+            protocol.Append(userName);
             protocol.Append(',');
             protocol.Append("<EOF>");
         }
