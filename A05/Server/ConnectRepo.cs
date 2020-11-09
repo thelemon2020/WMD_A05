@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Net;
+using System.IO;
 
 namespace Server
 {
@@ -24,12 +25,16 @@ namespace Server
         public void Add(string key, Connection c)
         {
             repo.TryAdd(key, c);
+            string addMessage = "ADD," + key + ",<EOF>";
+            AddMsg(addMessage); 
         }
 
 
         public void Remove(string key)
         {
             repo.TryRemove(key, out Connection c);
+            string removeMessage = "REMOVIE," + key + ",<EOF>";
+            AddMsg(removeMessage);
         }
 
         public bool CheckExists(string key)
