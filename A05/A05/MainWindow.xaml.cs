@@ -82,6 +82,7 @@ namespace A05
                         while (serverResponse[i] != "<EOF>")
                         {
                             userList.Text += serverResponse[i] + "\n";
+                            i++;
                         }
                         userInput.IsEnabled = true;
                         SubmitMessage.IsEnabled = true;

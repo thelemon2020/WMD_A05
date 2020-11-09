@@ -81,8 +81,8 @@ namespace Server
                 // delegate the AckCommand
                 AckCommand ackOK = new AckCommand();
                 //IP = splitMsg[1]; // parse the IP address of the client 
-                Name = splitMsg[2]; // get the name from the incoming connect message
-                Password = splitMsg[3];
+                Name = splitMsg[1]; // get the name from the incoming connect message
+                Password = splitMsg[2];
 
                 //if(fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
                 //{
