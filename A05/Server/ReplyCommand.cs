@@ -16,8 +16,6 @@ namespace Server
             string tmpMsg = "";
             protocol.Append(header);
             protocol.Append(",");
-            protocol.Append(sender);
-            protocol.Append(",");
             protocol.Append(message);
             protocol.Append(",");
             protocol.Append(footer);
