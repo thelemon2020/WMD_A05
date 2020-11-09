@@ -15,19 +15,33 @@ namespace Server
         public FileHandler()
         {
             credentialPath = "./login.txt";
-
-            if(!File.Exists(credentialPath))
+            try
             {
-                var pwStream = File.Create(credentialPath);
-                pwStream.Close();
+                if (!File.Exists(credentialPath))
+                {
+                    var pwStream = File.Create(credentialPath);
+                    pwStream.Close();
+                    WriteCredentials(super);
+                }
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
 
         public void WriteCredentials(string msg)
         {
-            string tmp = msg + "\n";
-            File.AppendAllText(credentialPath, tmp);
+            try
+            {
+                string tmp = msg + "\n";
+                File.AppendAllText(credentialPath, tmp);
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         public bool IsSuper(string msg)
@@ -46,13 +60,22 @@ namespace Server
         public bool CheckExist(string user, string pw)
         {
             string credentials = user + "," + pw;
-            string[] lines = File.ReadAllLines(credentialPath); // get all lines from the password file
-            foreach(string line in lines) // for every line retrieved from the password file
+
+            try
             {
-                if(line.Contains(credentials)) // check if the username and hashed password match
+                string[] lines = File.ReadAllLines(credentialPath); // get all lines from the password file
+                foreach (string line in lines) // for every line retrieved from the password file
                 {
-                    return true; // If both fields match, return true, the user exists
+                    if (line.Contains(credentials)) // check if the username and hashed password match
+                    {
+                        return true; // If both fields match, return true, the user exists
+                    }
                 }
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine(e.ToString());
+                return false;
             }
             return false; // if the username and password mix is not found, return false
         }
