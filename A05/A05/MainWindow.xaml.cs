@@ -88,13 +88,13 @@ namespace A05
                         }   
                         chatWindow.Text += connectedMessage;
                         int i = 3;
-                        string[] listOfUsers = null;
+                        List<string> listOfUsers = new List<string>();
                         while (serverResponse[i] != "<EOF>")
                         {
                             listOfUsers.Append(serverResponse[i] + "\n");
                             i++;
                         }
-                        Array.Sort(listOfUsers);
+                        listOfUsers.Sort();
                         foreach (string user in listOfUsers)
                         {
                             userList.Text += user;
