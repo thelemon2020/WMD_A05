@@ -97,7 +97,7 @@ namespace Server
                 {
                     if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
                     {
-                        AckCommand ack = new AckCommand();
+                        AckCommand ack = new AckCommand(repo);
                         repo.Add(Name, c); // Add the new client into the repo
                         AckMsg = ack.BuildProtocol(); // build the acknowledgement 
 
