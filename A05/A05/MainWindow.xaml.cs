@@ -80,6 +80,7 @@ namespace A05
                         if (serverResponse[2] == "1")
                         {
                             connectedMessage = string.Format("Connected to server at {0} with Super User Privileges\n", currentConnection.ipAddress.ToString());
+                            SuperUserButton.IsEnabled = true;
                         }
                         else
                         {

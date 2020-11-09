@@ -13,7 +13,7 @@
                 <MenuItem Header="Register Account" Click="Register_Click"></MenuItem>
                 <MenuItem Header="Connect To Server" Click="Connect_Click" Name="MenuConnect"></MenuItem>
                 <MenuItem Header="Disconnect From Server" Name="MenuDisconnect" IsEnabled="False" Click="disconnectFromServer"></MenuItem>
-                <MenuItem Header="Shut Down Server" IsEnabled="false"></MenuItem>
+                <MenuItem Header="Shut Down Server" Name ="SuperUserButton"  IsEnabled="false"></MenuItem>
                 <MenuItem Header="Close"></MenuItem>
             </MenuItem>
             <MenuItem Header="Options"></MenuItem>
