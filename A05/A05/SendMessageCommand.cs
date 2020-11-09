@@ -16,7 +16,7 @@ namespace A05
         {
             serverIP = currentConnection.ipAddress;
             serverPort = currentConnection.serverPort;
-            userMessage = currentConnection.username;
+            userName = currentConnection.username;
             message = userMessage;
             command = "SEND";
             createProtocol();
