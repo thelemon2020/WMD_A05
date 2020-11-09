@@ -26,7 +26,8 @@ namespace Server
 
         public void WriteCredentials(string msg)
         {
-            File.AppendAllText(credentialPath, msg);
+            string tmp = msg + "\n";
+            File.AppendAllText(credentialPath, tmp);
         }
 
         public bool IsSuper(string msg)
@@ -44,7 +45,7 @@ namespace Server
 
         public bool CheckExist(string user, string pw)
         {
-            string credentials = user + "," + pw;
+            string credentials = user + "," + pw + "\n";
             string[] lines = File.ReadAllLines(credentialPath); // get all lines from the password file
             foreach(string line in lines) // for every line retrieved from the password file
             {
