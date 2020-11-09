@@ -1,4 +1,15 @@
-﻿using System;
+﻿//*********************************************
+// File			 : 
+// Project		 : 
+// Programmer	 : Nick Byam, 8656317
+// Last Change   : 
+// Description	 : 
+//				 : 
+//				 : 
+//*********************************************
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -48,6 +59,9 @@ namespace Server
                 manager.Connect(listener);
                 Console.WriteLine("Connected!");
             }
+            listener.Stop();
+            Console.WriteLine("Server stopped. . .\nPress any key to continue.");
+            Console.ReadLine();
         }
     }
 }

@@ -1,4 +1,15 @@
-﻿using System;
+﻿//*********************************************
+// File			 : 
+// Project		 : 
+// Programmer	 : Nick Byam, 8656317
+// Last Change   : 
+// Description	 : 
+//				 : 
+//				 : 
+//*********************************************
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -47,6 +58,7 @@ namespace Server
 
             if(clientConnection.ShutDown == true)
             {
+                repo.AddMsg("DISCONNECT,<EOF>");
                 run = false;
             }
 
@@ -56,13 +68,9 @@ namespace Server
 
         public void SendReplies(ConnectRepo cr)
         {
-            while(true)
+            while(run)
             {
-                if(cr.msgQueue.IsEmpty && run == false) // we only need to send messages when there are messages in the queue
-                {
-                    break;
-                }
-                else if(cr.msgQueue.IsEmpty)
+                if (cr.msgQueue.IsEmpty)
                 {
                     Thread.Sleep(500);
                     continue;

@@ -1,4 +1,14 @@
-﻿using System;
+﻿//*********************************************
+// File			 : Connection.cs
+// Project		 : PROG2121 - A5 Chat Program
+// Programmer	 : Nick Byam, 8656317
+// Last Change   : 2020-11-09
+// Description	 : A connection class that holds relevant details about the user, as well as methods to send, receive,
+//               : and parse data that has come in. It serves to keep all client data in one place
+//*********************************************
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,6 +22,7 @@ namespace Server
 {
     public class Connection
     {
+        // all constants and properties used
         private const int kRegistered = 0;
         private const int kNotRegister = 1;
         private const int kIncomplete = 2;
@@ -22,6 +33,7 @@ namespace Server
         private const int kSuperUser = 1;
         public string Name { get; set; }
         public IPAddress IP { get; set; }
+        public int Port { get; set; }
         public string AckMsg { get; set; }
         public string ReplyMsg { get; set; }
         public bool ShutDown { get; set; }
@@ -33,6 +45,15 @@ namespace Server
         ConnectRepo repo;
         FileHandler fh = new FileHandler();
 
+
+        /////////////////////////////////////////
+        // Method       : Connection (ctor)
+        // Description  : The Connection class ctor, this initializes some values and grabs the reference to the repo so that
+        //              : the parser can add details or grab details where necessary
+        // Parameters   : ConnectRepo cr : the repo class that holds user details and messages
+        //              : object obj : the object used in the mutex when accessing files to see if a user is registered
+        // Returns      : N/A
+        /////////////////////////////////////////
         public Connection(ConnectRepo cr, object obj)
         {
             repo = cr;
@@ -40,6 +61,14 @@ namespace Server
             lockObj = obj;
         }
 
+
+        /////////////////////////////////////////
+        // Method       : Send
+        // Description  : A function to send data back to client through their stream
+        // Parameters   : string msg : the message to send to the client
+        //              : NetworkStream stream : The client's network stream
+        // Returns      : N/A
+        /////////////////////////////////////////
         public void Send(string msg, NetworkStream stream)
         {
             //package the message up into bytes, and then send on the current client stream
@@ -54,8 +83,14 @@ namespace Server
                 Console.WriteLine(e.ToString());
             }
         }
-        
 
+
+        /////////////////////////////////////////
+        // Method       :
+        // Description  :
+        // Parameters   :
+        // Returns      :
+        /////////////////////////////////////////
         public string Receive(NetworkStream stream)
         {
             //receive a communication from the client, and unpackage it to a string
@@ -78,6 +113,12 @@ namespace Server
         }
 
 
+        /////////////////////////////////////////
+        // Method       :
+        // Description  :
+        // Parameters   :
+        // Returns      :
+        /////////////////////////////////////////
         public void Parse(string recMsg, Connection c)
         {
             //Delegate which resulting command is necessary
