@@ -33,7 +33,7 @@ namespace Server
         public void Remove(string key)
         {
             repo.TryRemove(key, out Connection c);
-            string removeMessage = "REMOVIE," + key + ",<EOF>";
+            string removeMessage = "REMOVE," + key + ",<EOF>";
             AddMsg(removeMessage);
         }
 

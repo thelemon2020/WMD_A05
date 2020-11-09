@@ -35,5 +35,32 @@ namespace Server
             protocol.Clear();
             return tmpMsg;
         }
+
+        public string BuildProtocol(int status, ConnectRepo repo)
+        {
+            string tmpMsg = "";
+
+            protocol.Append(header); // build the acknowledgement so it's ready to send
+            protocol.Append(",");
+
+            if (status == 1)
+            {
+                protocol.Append(okMsg);
+            }
+            else
+            {
+                protocol.Append(failMsg);
+            }
+            protocol.Append(",");
+            foreach (KeyValuePair<string, Connection> entry in repo.repo)
+            {
+                protocol.Append(entry.Value.Name);
+                protocol.Append(",");
+            }
+            protocol.Append(footer);
+            tmpMsg = protocol.ToString();
+            protocol.Clear();
+            return tmpMsg;
+        }
     }
 }

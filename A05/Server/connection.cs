@@ -94,8 +94,8 @@ namespace Server
                 //{
                 //    AckMsg = ackOK.BuildProtocol(kFail);
                 //}
-                AckMsg = ackOK.BuildProtocol(kOK);
                 repo.Add(Name, c); // Add the new client into the repo
+                AckMsg = ackOK.BuildProtocol(kOK, repo);
             }
             else if(splitMsg[0] == "SEND")
             {
@@ -117,6 +117,8 @@ namespace Server
             }
             else if(splitMsg[0] == "SHUTDOWN")
             {
+                string shutdownMessage = "DISCONNECT," + splitMsg[1] + "<EOF>";
+                repo.AddMsg(shutdownMessage);
                 ShutDown = true;
             }
             else
