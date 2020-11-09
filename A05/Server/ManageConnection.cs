@@ -57,7 +57,9 @@ namespace Server
                 {
                     foreach (string msg in repo.msgQueue) // send all the message that are in the queue 
                     {
-                        string[] split = msg.Split(','); // split this up so we can grab the sender of the message
+                        string dequeuedMessage = null;
+                        repo.msgQueue.TryDequeue(out dequeuedMessage);
+                        string[] split = dequeuedMessage.Split(','); // split this up so we can grab the sender of the message
 
                         foreach (KeyValuePair<string, Connection> entry in repo.repo) // send message to all other clients
                         {
