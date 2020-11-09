@@ -82,18 +82,19 @@ namespace Server
                 AckCommand ackOK = new AckCommand();
                 IP = IPAddress.Parse(splitMsg[1]); // parse the IP address of the client 
                 Name = splitMsg[2]; // get the name from the incoming connect message
-                Password = splitMsg[3]; 
-                
+                Password = splitMsg[3];
+
                 //if(fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
                 //{
                 //    MsgLog = fh.ReadLog();
                 //    AckMsg = ackOK.BuildProtocol(kOK); // build the acknowledgement 
-                    
+
                 //}
                 //else
                 //{
                 //    AckMsg = ackOK.BuildProtocol(kFail);
                 //}
+                AckMsg = ackOK.BuildProtocol(kOK);
                 repo.Add(Name, c); // Add the new client into the repo
             }
             else if(splitMsg[0] == "SEND")
