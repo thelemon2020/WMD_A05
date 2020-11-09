@@ -168,9 +168,13 @@ namespace A05
             else
             {
                 string[] list = userList.Text.Split('\n');
-                list.Append((string) str + '\n');
+                string newEntry = (string)str + "\n";
+                list.Append(newEntry);
                 Array.Sort(list);
-                userList.Text = list.ToString();
+                foreach (string line in list)
+                {
+                    userList.Text += line;
+                }
             }
         }
 
