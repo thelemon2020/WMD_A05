@@ -48,7 +48,6 @@ namespace Server
             if(clientConnection.ShutDown == true)
             {
                 repo.AddMsg("DISCONNECT,<EOF>");
-                Thread.Sleep(3000);
                 run = false;
             }
 
@@ -58,13 +57,9 @@ namespace Server
 
         public void SendReplies(ConnectRepo cr)
         {
-            while(true)
+            while(run)
             {
-                if(cr.msgQueue.IsEmpty && run == false) // we only need to send messages when there are messages in the queue
-                {
-                    break;
-                }
-                else if(cr.msgQueue.IsEmpty)
+                if (cr.msgQueue.IsEmpty)
                 {
                     Thread.Sleep(500);
                     continue;
