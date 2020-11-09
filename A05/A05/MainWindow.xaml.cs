@@ -76,9 +76,17 @@ namespace A05
                     if (serverResponse[0] == "ACK")
                     {
                         isConnected = true;
-                        string connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
+                        string connectedMessage = "";
+                        if (serverResponse[2] == "1")
+                        {
+                            connectedMessage = string.Format("Connected to server at {0} with Super User Privileges\n", currentConnection.ipAddress.ToString());
+                        }
+                        else
+                        {
+                            connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
+                        }   
                         chatWindow.Text += connectedMessage;
-                        int i = 2;
+                        int i = 3;
                         string[] listOfUsers = null;
                         while (serverResponse[i] != "<EOF>")
                         {
