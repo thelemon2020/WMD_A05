@@ -89,7 +89,7 @@ namespace Server
                             {
                                 string recMsg = "";
                                 TcpClient tmpClient = new TcpClient(); // server acts like client and connects to client's listener thread
-                                tmpClient.Connect(entry.Value.IP, 35000); // connect to client's IP and port
+                                tmpClient.Connect(entry.Value.IP, entry.Value.Port); // connect to client's IP and port
                                 NetworkStream tmpStream = tmpClient.GetStream(); // get stream to client
                                 entry.Value.Send(msg, tmpStream); // Send the message as a reply to the client
 
