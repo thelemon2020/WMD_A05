@@ -28,6 +28,7 @@ namespace Server
         const string Incomplete = "Incomplete Data Received.";
         const string BadPermission = "You Don't Have Permission To Do This.";
         const string Error = "There Was a Problem With The Data Received.";
+        const string UsernameTaken = "This username is taken. please choose another";
 
         // Header and footer const strings
         const string Header = "NACK";
@@ -61,6 +62,10 @@ namespace Server
             else if(reason == 3)
             {
                 protocol.Append(BadPermission);
+            }
+            else if(reason == 4)
+            {
+                protocol.Append(UsernameTaken);
             }
             else
             {

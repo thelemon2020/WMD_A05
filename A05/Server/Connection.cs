@@ -27,7 +27,8 @@ namespace Server
         private const int kNotRegister = 1;
         private const int kIncomplete = 2;
         private const int kBadPermisson = 3;
-        private const int kError = 4;
+        private const int kBadUsername = 4;
+        private const int kError = 5;
         private const int kOK = 1;
         private const int kNormalUser = 0;
         private const int kSuperUser = 1;
@@ -135,17 +136,27 @@ namespace Server
                 Password = splitMsg[2];
                 lock(lockObj)
                 {
-                    if (!fh.CheckExist(Name, Password)) // if the user doesn't exist yet, create an entry for them on the file
-                    {
-                        AckCommand ack = new AckCommand();
-                        fh.WriteCredentials(Name + "," + Password);
-                        AckMsg = ack.BuildProtocol(); // send an acknowledgment back
-                        Console.WriteLine("{0} Has Registered", Name);
-                    }
-                    else // If the user exists already, then send back a NACK
+                    if(UsernameTaken(Name))
                     {
                         NackCommand nack = new NackCommand();
-                        AckMsg = nack.BuildProtocol(kRegistered);
+                        Name = "";
+                        Password = "";
+                        AckMsg = nack.BuildProtocol(kBadUsername);
+                    }
+                    else
+                    {
+                        if (!fh.CheckExist(Name, Password)) // if the user doesn't exist yet, create an entry for them on the file
+                        {
+                            AckCommand ack = new AckCommand();
+                            fh.WriteCredentials(Name + "," + Password);
+                            AckMsg = ack.BuildProtocol(); // send an acknowledgment back
+                            Console.WriteLine("{0} Has Registered", Name);
+                        }
+                        else // If the user exists already, then send back a NACK
+                        {
+                            NackCommand nack = new NackCommand();
+                            AckMsg = nack.BuildProtocol(kRegistered);
+                        }
                     }
                 }
             }
@@ -155,27 +166,37 @@ namespace Server
                 Password = splitMsg[2];
                 lock (lockObj) // since these actions involve a file, lock it
                 {
-                    Port = fh.ClientCount(); // get the port that client listener will use
-                    fh.UpdateClientLog(Port); // update the log so that the next user gets a different port
-                    if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
+                    if(UsernameTaken(Name))
                     {
-                        AckCommand ack = new AckCommand();
-                        repo.Add(Name, c); // Add the new client into the repo
-                        if(fh.IsSuper(Name+","+Password))
-                        {
-                            AckMsg = ack.BuildProtocol(kSuperUser, repo, c); // build the acknowledgement for super user
-                        }
-                        else
-                        {
-                            AckMsg = ack.BuildProtocol(kNormalUser, repo, c); // build the acknowledgement for normal user
-                        }
-                        Console.WriteLine("User {0} Connected", Name);
+                        NackCommand nack = new NackCommand();
+                        Name = "";
+                        Password = "";
+                        AckMsg = nack.BuildProtocol(kBadUsername);
                     }
                     else
                     {
-                        NackCommand nack = new NackCommand(); // if the user has not registered, send them back a NACK
-                        AckMsg = nack.BuildProtocol(kNotRegister);
-                    }
+                        if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
+                        {
+                            Port = fh.ClientCount(); // get the port that client listener will use
+                            fh.UpdateClientLog(Port); // update the log so that the next user gets a different port
+                            AckCommand ack = new AckCommand();
+                            repo.Add(Name, c); // Add the new client into the repo
+                            if (fh.IsSuper(Name + "," + Password))
+                            {
+                                AckMsg = ack.BuildProtocol(kSuperUser, repo, c); // build the acknowledgement for super user
+                            }
+                            else
+                            {
+                                AckMsg = ack.BuildProtocol(kNormalUser, repo, c); // build the acknowledgement for normal user
+                            }
+                            Console.WriteLine("User {0} Connected", Name);
+                        }
+                        else
+                        {
+                            NackCommand nack = new NackCommand(); // if the user has not registered, send them back a NACK
+                            AckMsg = nack.BuildProtocol(kNotRegister);
+                        }
+                    }    
                 }
             }
             else if(splitMsg[0] == "SEND") // If the user sends a message to be displayed in chat
@@ -228,6 +249,26 @@ namespace Server
             {
                 NackCommand nack = new NackCommand();
                 AckMsg = nack.BuildProtocol(kError);
+            }
+        }
+
+
+        /////////////////////////////////////////
+        // Method       : UsernameTaken
+        // Description  : A method that checks if a username is in use, so that two users don't use the same name
+        // Parameters   : string name : the desired username
+        // Returns      : true : if the name is taken
+        //              : false : if the name is not taken
+        /////////////////////////////////////////
+        public bool UsernameTaken(string name)
+        {
+            if(repo.repo.ContainsKey(name))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }
