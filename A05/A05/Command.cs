@@ -54,11 +54,6 @@ namespace A05
                     InteractWithServer.writeToServer(serverStream, protocol.ToString());
                     serverResponse = InteractWithServer.readFromServer(serverStream);
                     InteractWithServer.closeConnection(serverStream);
-                    if (serverResponse.Contains("NACK"))
-                    {
-                        string[] temp = serverResponse.Split(',');
-                        serverResponse = "Server Returned Error -" + temp[1] + "\n"; //server rejects connection
-                    }
                 }
             }
             catch
