@@ -15,6 +15,10 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    //*******************************************
+    // Class    : AckCommand
+    // Purpose  : A class that functions to build ack messages to protocol specification
+    //*******************************************
     public class AckCommand : Command
     {
         private const string header = "ACK";
