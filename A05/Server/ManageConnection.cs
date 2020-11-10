@@ -1,11 +1,11 @@
 ﻿//*********************************************
-// File			 : 
-// Project		 : 
+// File			 : ManageConnection.cs
+// Project		 : PROG2121 - A5 Chat Program
 // Programmer	 : Nick Byam, 8656317
-// Last Change   : 
-// Description	 : 
-//				 : 
-//				 : 
+// Last Change   : 2020-11-09
+// Description	 : The manage connection class is the class that grabs and creates threads from TcpClient objects with the methods
+//				 : Contained, as well as runs a reply loop in a separate thread that acts solely to send messages to all connected
+//				 : Clients.
 //*********************************************
 
 
@@ -20,18 +20,42 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    //******************************************
+    // Name     : ManageConnection
+    // Purpose  : A class which contains the methods used for the operating threads, it manages sending and receiving patterns
+    //          : for all connections including incoming messages, outgoing messages, and replies back to clients after a command
+    //          : is received.
+    //******************************************
     public class ManageConnection
     {
+
+
         ConnectRepo repo;
         public volatile bool run = true;
         public readonly object lockobj;
 
+
+        /////////////////////////////////////////
+        // Method       : ManageConnection (ctor)
+        // Description  : The constructor for the ManageConnection class, it assigns the connection repo and an object used
+        //              : for locking sensitive operations, such as file access
+        // Parameters   : ConnectRepo cr : the reference of the ConnectRepo object defined in server
+        // Returns      : N/A
+        /////////////////////////////////////////
         public ManageConnection(ConnectRepo cr)
         {
             repo = cr;
             lockobj = new object();
         }
 
+
+        /////////////////////////////////////////
+        // Method       : Connect
+        // Description  : A method that takes the listener and gets a client connection as a TcpClient objects, then starts a 
+        //              : thread with that new client
+        // Parameters   : TcpListener listener : the server listener
+        // Returns      : N/A
+        /////////////////////////////////////////
         public void Connect(TcpListener listener)
         {
             TcpClient client = listener.AcceptTcpClient(); // Accept a new client
@@ -39,6 +63,14 @@ namespace Server
             clientThread.Start();
         }
 
+
+        /////////////////////////////////////////
+        // Method       : HandleClient
+        // Description  : The method that handles incoming client communications, parses them, then sends back the necessary ACK or NACK
+        // Parameters   : TcpClient client : the client connection object used to grab the stream and communicate with the client
+        //              : ConnectRepo repo : the connect repo object passed as a reference from the server to be used in the thread
+        // Returns      : N/A
+        /////////////////////////////////////////
         private void HandleClient(TcpClient client, ConnectRepo repo)
         {
             // In this handle client method, the server doesn't need to keep this in a loop
@@ -56,8 +88,8 @@ namespace Server
             clientConnection.IP = IP;
             clientConnection.Send(clientConnection.AckMsg, stream); // send back an acknowledgement of receiving
 
-            if(clientConnection.ShutDown == true)
-            {
+            if(clientConnection.ShutDown == true) // if the super user sends the shut down command a flag is set in parse
+            {                                     // and then the server will tell all clients to disconnect, and stop the server
                 repo.AddMsg("DISCONNECT,<EOF>");
                 Thread.Sleep(5000);
                 run = false;
@@ -67,18 +99,27 @@ namespace Server
             client.Close();
         }
 
+
+        /////////////////////////////////////////
+        // Method       : SendReplies
+        // Description  : The method used in a thread to repeatedly send messages to all clients if there is a message in
+        //              : the queue to be sent. If there is not message in the queue, the loop repeatedly checks the queue till
+        //              : a message shows up to be sent.
+        // Parameters   : ConnectRepo cr : the connect repo passed by reference to be used to get client details for sending data
+        // Returns      : N/A
+        /////////////////////////////////////////
         public void SendReplies(ConnectRepo cr)
         {
-            while(run)
+            while(run) // loop until the admin gives the shutdown server command
             {
-                if (cr.msgQueue.IsEmpty)
+                if (cr.msgQueue.IsEmpty) // don't attempt to send messages if there aren't messages to send
                 {
                     Thread.Sleep(500);
                     continue;
                 }
                 else // if there are messages in the queue then go through each message and send it to each connection
                 {
-                    foreach (string msg in repo.msgQueue) // send all the message that are in the queue 
+                    foreach (string msg in repo.msgQueue) // send all the messages that are in the queue 
                     {
                         string dequeuedMessage = null;
                         repo.msgQueue.TryDequeue(out dequeuedMessage);
@@ -97,7 +138,7 @@ namespace Server
                                 recMsg = entry.Value.Receive(tmpStream);
                                 entry.Value.Parse(recMsg, entry.Value); /// parse the received message, which will be an ack
 
-                                tmpStream.Close();
+                                tmpStream.Close(); // close both the stream and connection after sending
                                 tmpClient.Close();
                             }
 

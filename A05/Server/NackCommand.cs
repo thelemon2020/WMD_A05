@@ -1,11 +1,9 @@
 ﻿//*********************************************
-// File			 : 
-// Project		 : 
-// Programmer	 : Nick Byam, 8656317
-// Last Change   : 
-// Description	 : 
-//				 : 
-//				 : 
+// File			 : NackCommand.cs
+// Project		 : PROG2121 - A5 Chat Program
+// Programmer	 : Nick Byam, Chris Lemon
+// Last Change   : 2020-11-09
+// Description	 : A class used to build protocol specific NACK messages back to the user based on a condition code
 //*********************************************
 
 
@@ -17,16 +15,32 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    //******************************************
+    // Name     : NackCommand
+    // Purpose  : A class which uses a string builder from its base class to build NACK messages when data from the client
+    //          : meets certain error conditions.
+    //******************************************
     public class NackCommand: Command
     {
+        // error message const strings
         const string NotRegister = "You Have Not Registered Yet.";
         const string Registered = "This User Has Already Been Registered";
         const string Incomplete = "Incomplete Data Received.";
         const string BadPermission = "You Don't Have Permission To Do This.";
         const string Error = "There Was a Problem With The Data Received.";
+
+        // Header and footer const strings
         const string Header = "NACK";
         const string Footer = "<EOF>";
 
+
+        /////////////////////////////////////////
+        // Method       : BuildProtocol
+        // Description  : The method that builds the string adhering to protocol specifics depending on the condition code,
+        //              : a different error message is returned to the client.
+        // Parameters   : int reason : the condition code that relates to the specific error message constants
+        // Returns      : string tmp : a temporary string which holds the string built in the method.
+        /////////////////////////////////////////
         public string BuildProtocol(int reason)
         {
             protocol.Append(Header);

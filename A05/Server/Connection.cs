@@ -38,7 +38,6 @@ namespace Server
         public string ReplyMsg { get; set; }
         public bool ShutDown { get; set; }
         public string Password { private get; set; }
-        public string[] MsgLog { get; set; }
 
         private readonly object lockObj;
 
@@ -225,9 +224,8 @@ namespace Server
                     AckMsg = nack.BuildProtocol(kBadPermisson);
                 }
             }
-            else
+            else // if any other kind of data comes through and is unrecognized, send a NACK
             {
-                // delegate Ack fail
                 NackCommand nack = new NackCommand();
                 AckMsg = nack.BuildProtocol(kError);
             }
