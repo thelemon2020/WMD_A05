@@ -87,9 +87,9 @@ namespace Server
 
         /////////////////////////////////////////
         // Method       : Receive
-        // Description  :
-        // Parameters   :
-        // Returns      :
+        // Description  : A method to receive incoming communication from the client
+        // Parameters   : networkStream stream : The network stream of the client
+        // Returns      : string msgRec : The message received from the client
         /////////////////////////////////////////
         public string Receive(NetworkStream stream)
         {
@@ -100,8 +100,8 @@ namespace Server
 
             try
             {
-                bytesRec = stream.Read(incomingData, 0, incomingData.Length);
-                msgRec += Encoding.ASCII.GetString(incomingData, 0, bytesRec);
+                bytesRec = stream.Read(incomingData, 0, incomingData.Length); // read from the stream
+                msgRec += Encoding.ASCII.GetString(incomingData, 0, bytesRec); // convert to string
                 stream.Flush();
             }
             catch(SocketException e)
@@ -114,22 +114,23 @@ namespace Server
 
 
         /////////////////////////////////////////
-        // Method       :
-        // Description  :
-        // Parameters   :
-        // Returns      :
+        // Method       : Parse
+        // Description  : A method which takes input and depending on the content delegates different tasks
+        // Parameters   : string recMsg : the string received from the user
+        //              : Connection c : the current client connection class
+        // Returns      : N/A
         /////////////////////////////////////////
         public void Parse(string recMsg, Connection c)
         {
             //Delegate which resulting command is necessary
             string[] splitMsg = recMsg.Split(',');
 
-            if(splitMsg[splitMsg.Length - 1] != "<EOF>")
+            if(splitMsg[splitMsg.Length - 1] != "<EOF>") // If the data sent in the stream is incomplete for some reason
             {
                 NackCommand nack = new NackCommand();
-                AckMsg = nack.BuildProtocol(kIncomplete);
+                AckMsg = nack.BuildProtocol(kIncomplete); // Build a NACK to send back
             }
-            else if(splitMsg[0] == "REGISTER") // Register command sent by user
+            else if(splitMsg[0] == "REGISTER") // If the user wants to register
             {
                 Name = splitMsg[1];
                 Password = splitMsg[2];
@@ -149,14 +150,14 @@ namespace Server
                     }
                 }
             }
-            else if(splitMsg[0] == "CONNECT")
+            else if(splitMsg[0] == "CONNECT") // If the user wants to make initial connection to the server
             {
                 Name = splitMsg[1]; // get the name from the incoming connect message
                 Password = splitMsg[2];
-                lock (lockObj)
+                lock (lockObj) // since these actions involve a file, lock it
                 {
-                    Port = fh.ClientCount();
-                    fh.UpdateClientLog();
+                    Port = fh.ClientCount(); // get the port that client listener will use
+                    fh.UpdateClientLog(Port); // update the log so that the next user gets a different port
                     if (fh.CheckExist(Name, Password)) // if the user exists and has been registered they can connect
                     {
                         AckCommand ack = new AckCommand();
@@ -173,52 +174,52 @@ namespace Server
                     }
                     else
                     {
-                        NackCommand nack = new NackCommand();
+                        NackCommand nack = new NackCommand(); // if the user has not registered, send them back a NACK
                         AckMsg = nack.BuildProtocol(kNotRegister);
                     }
                 }
             }
-            else if(splitMsg[0] == "SEND")
+            else if(splitMsg[0] == "SEND") // If the user sends a message to be displayed in chat
             {
                 // delegate the ReplyCommand
                 ReplyCommand reply = new ReplyCommand();
                 AckCommand ackOK = new AckCommand();
                 Name = splitMsg[1];
                 AckMsg = ackOK.BuildProtocol(); // still need to send an ok acknowledgement that message was received
-                string tmpMsg = reply.CheckMessage(splitMsg); // Since we split on commas, rebuild the message to not be split
+                string tmpMsg = reply.CheckMessage(splitMsg); // Since we split on commas, rebuild the message to not be split if it had commas in it
                 ReplyMsg = reply.BuildProtocol(tmpMsg); // build the reply
                 repo.AddMsg(ReplyMsg); // Add the message that came in to the queue to be sent
-                Console.WriteLine("{0} Sent: {1}", Name, splitMsg[2]);
+                Console.WriteLine("{0} Sent: {1}", Name, ReplyMsg);
             }
             else if(splitMsg[0] == "ACK")
             {
-                return; // If the client sends an acknowledgement of reply received, don't need to do anything as of now
+                return; // If the client sends an acknowledgement of reply received, don't need to do anything
             }
-            else if(splitMsg[0] == "DISCONNECT") 
+            else if(splitMsg[0] == "DISCONNECT") // the user wants to disconnect from the server
             {
                 Name = splitMsg[1];
-                repo.Remove(Name);
+                repo.Remove(Name); // remove the user
                 AckCommand ack = new AckCommand();
-                AckMsg = ack.BuildProtocol();
+                AckMsg = ack.BuildProtocol(); // send ack of command received ok
                 Console.WriteLine("User {0} Disconnected", Name);
             }
             else if(splitMsg[0] == "SHUTDOWN") // if a super user sends the server shut off command
             {
                 Name = splitMsg[1];
                 Password = splitMsg[2];
-                bool isSuper = fh.IsSuper(Name + "," + Password);
-                if(isSuper)
+                bool isSuper = fh.IsSuper(Name + "," + Password); // make sure the user is the admin
+                if(isSuper) // if the user is the admin set the shutdown property to true
                 {
                     AckCommand ack = new AckCommand();
                     AckMsg = ack.BuildProtocol();
                     ShutDown = true;
                     Console.WriteLine("{0} Shutdown the Server");
-                    lock(lockObj)
+                    lock(lockObj) // clear the client log so the first client to join starts at 35000 for their listener port again
                     {
                         fh.ClearClientLog();
                     }
                 }
-                else
+                else // if the user is not the admin, then send a NACK
                 {
                     NackCommand nack = new NackCommand();
                     AckMsg = nack.BuildProtocol(kBadPermisson);
