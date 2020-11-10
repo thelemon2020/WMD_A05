@@ -129,24 +129,29 @@ namespace Server
                         {
                             if (split[1] != entry.Value.Name) // don't send the message to the sender
                             {
-                                string recMsg = "";
-                                TcpClient tmpClient = new TcpClient(); // server acts like client and connects to client's listener thread
-                                tmpClient.Connect(entry.Value.IP, entry.Value.Port); // connect to client's IP and port
-                                NetworkStream tmpStream = tmpClient.GetStream(); // get stream to client
-                                entry.Value.Send(msg, tmpStream); // Send the message as a reply to the client
+                                try
+                                {
+                                    string recMsg = "";
+                                    TcpClient tmpClient = new TcpClient(); // server acts like client and connects to client's listener thread
+                                    tmpClient.Connect(entry.Value.IP, entry.Value.Port); // connect to client's IP and port
+                                    NetworkStream tmpStream = tmpClient.GetStream(); // get stream to client
+                                    entry.Value.Send(msg, tmpStream); // Send the message as a reply to the client
 
-                                recMsg = entry.Value.Receive(tmpStream);
-                                entry.Value.Parse(recMsg, entry.Value); /// parse the received message, which will be an ack
+                                    recMsg = entry.Value.Receive(tmpStream);
+                                    entry.Value.Parse(recMsg, entry.Value); /// parse the received message, which will be an ack
 
-                                tmpStream.Close(); // close both the stream and connection after sending
-                                tmpClient.Close();
+                                    tmpStream.Close(); // close both the stream and connection after sending
+                                    tmpClient.Close();
+                                }
+                                catch(SocketException e)
+                                {
+                                    Console.WriteLine(e.ToString());
+                                }
                             }
-
                         }
                     }
                 }
-            }
-            
+            } 
         }
     }
 }
