@@ -31,7 +31,7 @@ namespace A05
         }
         private void Register(object sender, RoutedEventArgs e)
         {
-            int tempPort = 0;//
+            int tempPort = 0;
             username = userName.Text;
             userPassword = password.Password;
             ipAddress = IP.Text;

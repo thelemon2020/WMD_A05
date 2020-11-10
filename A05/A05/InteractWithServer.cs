@@ -63,10 +63,9 @@ namespace A05
        *
        * DESCRIPTION : This method receives data from a network stream
        *
-       * PARAMETERS : serverStream - the network stream to write to
-       *              protocol - the string to send to the server
+       * PARAMETERS : serverStream - the network stream to read from
        *
-       * RETURNS : serverStream - the network stream to the server
+       * RETURNS : receivedData - the return string from the server
        */
         static public string readFromServer(NetworkStream serverStream)
         {
@@ -77,6 +76,15 @@ namespace A05
             recievedData += Encoding.ASCII.GetString(rawData, 0, bytesRec);// decode the response to a string
             return recievedData; // return the response
         }
+       /*
+        * METHOD :closeConnection()
+        *
+        * DESCRIPTION : This method closes the stream
+        *
+        * PARAMETERS : serverStream - the network stream to close
+        *
+        * RETURNS :  nothing
+        */
         static public void closeConnection(NetworkStream serverStream)
         {
             serverStream.Close();
