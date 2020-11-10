@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+* FILE : StartConnectionCommand.cs
+* PROJECT : PROG2121 - Assignment #5
+* PROGRAMMER : Chris Lemon
+* FIRST VERSION : 2020 - 11 - 04 
+* REVISED ON : 2020 - 11 - 04
+* DESCRIPTION : This file defines the ShutDown Command Class
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,6 +18,11 @@ using System.Threading.Tasks;
 
 namespace A05
 {
+    /*
+    * NAME : StartConnectionCommand
+    * PURPOSE : This defines the StartConnection Command Class.  It inherits from the Command class.  It's purpose is to provide a protocol 
+    *           to initiate the first connection between client and server
+    */
     public class StartConnectionCommand : Command
     {
         public string password { get; set; }
@@ -38,7 +51,15 @@ namespace A05
          
             createProtocol();
         }
-
+       /*
+        * METHOD : hashPassword()
+        *
+        * DESCRIPTION : This method hashes the user's password for security purpose
+        *
+        * PARAMETERS : password - the password to hash
+        *
+        * RETURNS : hashString - the characters that make up the newly hashed password
+        */
         private string hashPassword(string password)
         {
             MD5 hasher = MD5.Create();
@@ -50,7 +71,15 @@ namespace A05
             hashString += Encoding.ASCII.GetString(hashPass, 0, hashPass.Length);
             return hashString;
         }
-
+       /*
+        * METHOD : createProtocol()
+        *
+        * DESCRIPTION : This creates the string that will be converted to bytes and sent to the server
+        *
+        * PARAMETERS : None
+        *
+        * RETURNS : Nothing
+        */
         private void createProtocol()
         {
             protocol = new StringBuilder();

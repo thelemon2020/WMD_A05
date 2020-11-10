@@ -48,6 +48,7 @@ namespace A05
         {
             InitializeComponent();
         }
+
         /*
          * METHOD : Connect_Click()
          *
@@ -92,16 +93,16 @@ namespace A05
                             connectedMessage = string.Format("Connected to server at {0}\n", currentConnection.ipAddress.ToString());
                         }
                         chatWindow.Text += connectedMessage;
-                        int i = 4;
+                        int i = 4; //the user list starts in the fifth element
                         List<string> listOfUsers = new List<string>();
-                        while (serverResponse[i] != "<EOF>")
+                        while (serverResponse[i] != "<EOF>") //create a list of current users
                         {
                             string newEntry = serverResponse[i] + "\n";
                             listOfUsers.Add(newEntry);
                             i++;
                         }
                         listOfUsers.Sort();
-                        foreach (string user in listOfUsers)
+                        foreach (string user in listOfUsers) // populate the userList textbox
                         {
                             userList.Text += user;
                         }
@@ -109,10 +110,10 @@ namespace A05
                         SubmitMessage.IsEnabled = true;
                         MenuDisconnect.IsEnabled = true;
                         MenuConnect.IsEnabled = false;
-                        Thread checkForNewMessages = new Thread(listenForMessages);
-                        checkForNewMessages.Start();
+                        Thread checkForNewMessages = new Thread(listenForMessages);  //create listener thread
+                        checkForNewMessages.Start(); //start thread
                     }
-                    else if (serverResponse[0] == "NACK")
+                    else if (serverResponse[0] == "NACK") //if server refuses connection
                     {
                         chatWindow.Text += "Connection Failed - " + serverResponse[1] + "\n";
                         currentConnection = null;
@@ -125,11 +126,29 @@ namespace A05
             }
             newConnection.Close();
         }
+       /*
+        * METHOD : listenForMessages()
+        *
+        * DESCRIPTION : This method creates a listener
+        *
+        * PARAMETERS : None
+        *
+        * RETURNS : Nothing
+        */
         private void listenForMessages()
         {
             TcpListener listener = new TcpListener(IPAddress.Any, currentConnection.clientPort);
             startServer(listener);
         }
+       /*
+        * METHOD : startServer()
+        *
+        * DESCRIPTION : This method starts the listener and checks for a connection
+        *
+        * PARAMETERS : listener - the tcp listener
+        *
+        * RETURNS : Nothing
+        */
         private void startServer(TcpListener listener)
         {
             listener.Start();
@@ -141,11 +160,20 @@ namespace A05
                     continue;
                 }
                 TcpClient client = listener.AcceptTcpClient(); // Accept a new client
-                handleConnection(client);
+                handleConnection(client); //pass the connection to be handled
                 client.Close();
             }
             listener.Stop();
         }
+       /*
+        * METHOD : handleConnection()
+        *
+        * DESCRIPTION : This method gets information from the server, parses it and sends a response back
+        *
+        * PARAMETERS : client - the incoming connection
+        *
+        * RETURNS : Nothing
+        */
         private void handleConnection(TcpClient client)
         {
             try
@@ -165,6 +193,15 @@ namespace A05
                 exceptionString[2] = e.Message.ToString();
             }
         }
+        /*
+       * METHOD : updateUI()
+       *
+       * DESCRIPTION : this method takes the protocol that just came in and parses it out
+       *
+       * PARAMETERS : arguments - an array that makes up the protocol that was just recieved
+       *
+       * RETURNS : Nothing
+       */
         private void updateUI(string[] arguments)
         {
             if (arguments[0] == "REPLY")
@@ -184,6 +221,15 @@ namespace A05
                 removeUser(arguments[1]);
             }
         }
+       /*
+        * METHOD : changeChatWindow()
+        *
+        * DESCRIPTION : This method uses a dispatcher to update the chat window with new messages
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         private void changeChatWindow(Object str)
         {
             string[] userMessage = (string[])str;
@@ -198,6 +244,15 @@ namespace A05
                 chatWindow.Text += userMessage[1] + ">" + userMessage[2] + "\n";
             }
         }
+       /*
+        * METHOD : addUser()
+        *
+        * DESCRIPTION : This method uses a dispatcher to update the userList with a new user
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         private void addUser(Object str)
         {
             var dispatcher = userList.Dispatcher;
@@ -227,6 +282,15 @@ namespace A05
             }
         }
 
+       /*
+        * METHOD : removeUser()
+        *
+        * DESCRIPTION : This method uses a dispatcher to update the userList when a user disconnects
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        * 
+        * RETURNS : Nothing
+        */
         private void removeUser(Object str)
         {
             var dispatcher = userList.Dispatcher;
@@ -242,6 +306,17 @@ namespace A05
                 userList.Text = list.ToString();
             }
         }
+       /*
+        * METHOD : Submit()
+        *
+        * DESCRIPTION : This method is triggered when the user clicks the send button to send a message to the server. 
+        *               It generates the information needed to make that connection
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the routed event
+        *
+        * RETURNS : Nothing
+        */
         private void Submit(object sender, RoutedEventArgs e)
         {
             if (userInput.Text != "")
@@ -252,12 +327,32 @@ namespace A05
                 userInput.Text = "";
             }
         }
+
+        /*
+       * METHOD : disconnectFromServer()
+       *
+       * DESCRIPTION : This method is triggered when the user clicks the Disconnect From Server button.  It sends a protocol to the server
+       *               and resets the client to it's original state
+       *
+       * PARAMETERS : sender - the object that called this method
+       *              e - the arguments sent by the routed event
+       *
+       * RETURNS : Nothing
+       */
         private void disconnectFromServer(object sender, RoutedEventArgs e)
         {
             DisconnectCommand disconnect = new DisconnectCommand(currentConnection);
             disconnect.ExecuteCommand();
             startShutDownProcess();
         }
+        /*
+       * METHOD : startShutDownProcess()
+       *
+       * DESCRIPTION : This method resets the client to it's original state 
+       * PARAMETERS : None
+       *
+       * RETURNS : Nothing
+       */
         private void startShutDownProcess()
         {
             string disconnect = "";
@@ -270,6 +365,15 @@ namespace A05
             isConnected = false;
             currentConnection = null;
         }
+       /*
+        * METHOD : shutDownServerChatWindow()
+        *
+        * DESCRIPTION : This method uses a dispatcher to update the chat window with a disconnect message
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         public void shutDownServerChatWindow(Object str)
         {
             var dispatcher = chatWindow.Dispatcher;
@@ -283,6 +387,15 @@ namespace A05
                 chatWindow.Text += "Disconnected from server at " + currentConnection.ipAddress + "\n";
             }
         }
+       /*
+        * METHOD : shutDownServerMenuDisconnect()
+        *
+        * DESCRIPTION : This method uses a dispatcher to disable the disconnect button
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         public void shutDownServerMenuDisconnect(Object str)
         {
             var dispatcher = MenuDisconnect.Dispatcher;
@@ -297,6 +410,15 @@ namespace A05
                 MenuDisconnect.IsEnabled = false;
             }
         }
+       /*
+        * METHOD : shutDownServerMenuConnect()
+        *
+        * DESCRIPTION : This method uses a dispatcher to enable the connect button
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         public void shutDownServerMenuConnect(Object str)
         {
             var dispatcher = MenuConnect.Dispatcher;
@@ -310,6 +432,15 @@ namespace A05
                 MenuConnect.IsEnabled = true;
             }
         }
+       /*
+        * METHOD : shutDownServerUserList()
+        *
+        * DESCRIPTION : This method uses a dispatcher to clear the userlist
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         public void shutDownServerUserList(Object str)
         {
             var dispatcher = userList.Dispatcher;
@@ -323,6 +454,15 @@ namespace A05
                 userList.Text = "";
             }
         }
+       /*
+        * METHOD : shutDownServerSubmitMessage()
+        *
+        * DESCRIPTION : This method uses a dispatcher to disable the submit button
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         public void shutDownServerSubmitMessage(Object str)
         {
             var dispatcher = SubmitMessage.Dispatcher;
@@ -336,6 +476,15 @@ namespace A05
                 SubmitMessage.IsEnabled = false;
             }
         }
+       /*
+        * METHOD : shutDownServerUserInput()
+        *
+        * DESCRIPTION : This method uses a dispatcher to disable the userInput field
+        *
+        * PARAMETERS : str - an object that is cast into a string
+        *
+        * RETURNS : Nothing
+        */
         public void shutDownServerUserInput(Object str)
         {
             var dispatcher = userInput.Dispatcher;
@@ -351,7 +500,17 @@ namespace A05
             }
 
         }
-
+        /*
+        * METHOD : Register_Click()
+        *
+        * DESCRIPTION : This method is triggered when the user clicks the Register button. It opens a new window that allows the user to enter information
+        *               then uses that information to register on the server
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the routed event
+        *
+        * RETURNS : Nothing
+        */
         private void Register_Click(object sender, RoutedEventArgs e)
         {
             RegisterWindow reg = new RegisterWindow();
@@ -374,23 +533,63 @@ namespace A05
             }
             reg.Close();
         }
-
+       /*
+        * METHOD : SuperShutDown()
+        *
+        * DESCRIPTION : This method is triggered when the super user clicks the Shutdown Server button.  It sends a protocol to the server
+        *               that triggers a shut down
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the routed event
+        *
+        * RETURNS : Nothing
+        */
         private void SuperShutDown(object sender, RoutedEventArgs e)
         {
             ShutDownCommand shutItDown = new ShutDownCommand(currentConnection);
             shutItDown.ExecuteCommand();
         }
 
+       /*
+        * METHOD : commandBinding_CanExecute_Close()
+        *
+        * DESCRIPTION : Checks to see if the command can be executed, which it always can
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the routed event
+        *
+        * RETURNS : Nothing
+        */
         private void CommandBinding_CanExecute_Close(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
+       /*
+        * METHOD : commandBinding_Executed_Close()
+        *
+        * DESCRIPTION : Closes the window when close clicked
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the routed event
+        *
+        * RETURNS : Nothing
+        */
         private void CommandBinding_Executed_Close(object sender, ExecutedRoutedEventArgs e)
         {
             this.Close();
         }
 
+       /*
+        * METHOD : MainWindow_Closing()
+        *
+        * DESCRIPTION : Shuts down the connection to the server if window is closed
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the cancel event
+        *
+        * RETURNS : Nothing
+        */
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (currentConnection != null)

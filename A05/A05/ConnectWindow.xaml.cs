@@ -42,6 +42,16 @@ namespace A05
             canProceed = false; 
         }
 
+        /*
+         * METHOD : startConnect()
+         *
+         * DESCRIPTION : This method copies the user information into properties to be accessed by the MainWindow
+         *
+         * PARAMETERS : sender - the object that called this method
+         *              e - the arguments sent by the routed event
+         *
+         * RETURNS : Nothing
+         */
         private void startConnect(object sender, RoutedEventArgs e)
         {
             int tempPort = 0;
@@ -53,7 +63,16 @@ namespace A05
             canProceed = true;
             this.Close();
         }
-
+       /*
+        * METHOD : cancelWindow()
+        *
+        * DESCRIPTION : This method closes this window
+        *
+        * PARAMETERS : sender - the object that called this method
+        *              e - the arguments sent by the routed event
+        *
+        * RETURNS : Nothing
+        */
         private void cancelWindow(object sender, RoutedEventArgs e)
         {
             this.Close();
