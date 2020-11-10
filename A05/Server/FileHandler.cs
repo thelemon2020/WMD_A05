@@ -20,6 +20,7 @@ namespace Server
 {
     public class FileHandler
     {
+        private const int kPort = 35000;
         private string credentialPath;
         private string clientLog;
         private string super = "admin,!#/)zW??C?J\u000eJ?\u001f?"; // this is awful form, I know, not very secure
@@ -51,7 +52,7 @@ namespace Server
 
         public int ClientCount()
         {
-            int port = 35000;
+            int port = kPort;
             string[] lines = new string[1024];
             try
             {
@@ -75,11 +76,11 @@ namespace Server
         }
 
 
-        public void UpdateClientLog()
+        public void UpdateClientLog(int port)
         {
             try
             {
-                File.AppendAllText(clientLog, "new client\n");
+                File.AppendAllText(clientLog, "port: " + port.ToString() + "In use.");
             }
             catch(IOException e)
             {

@@ -16,6 +16,10 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    //******************************************
+    // Name     : Command
+    // Purpose  : A general command class which gives all other command class the stringbuilder to use
+    //******************************************
     public class Command
     {
         public StringBuilder protocol;
