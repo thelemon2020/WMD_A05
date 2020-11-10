@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+* FILE : ConnectWindow.xaml.cs
+* PROJECT : PROG2121 - Assignment #5
+* PROGRAMMER : Chris Lemon
+* FIRST VERSION : 2020 - 11 - 02 
+* REVISED ON : 2020 - 11 - 03
+* DESCRIPTION : This file defines the ConnectWindow UI class.  
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +23,11 @@ using System.Windows.Shapes;
 
 namespace A05
 {
-    /// <summary>
-    /// Interaction logic for ConnectWindow.xaml
-    /// </summary>
+
+   /*
+    * NAME : ConnectWindow
+    * PURPOSE : This defines the ConnectWindow class.  It allows the user to enter the information neccessary to connect to a server
+    */
     public partial class ConnectWindow : Window
     {
         public string username { get; set; }
@@ -24,6 +35,7 @@ namespace A05
         public string ipAddress { get; set; }
         public int port { get; set; }
         public bool canProceed { get; set; }
+
         public ConnectWindow()
         {
             InitializeComponent();

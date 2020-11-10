@@ -3,7 +3,7 @@
 * PROJECT : PROG2121 - Assignment #5
 * PROGRAMMER : Chris Lemon
 * FIRST VERSION : 2020 - 11 - 02 
-* REVISED ON : 2020 - 11 - 08
+* REVISED ON : 2020 - 11 - 09
 * DESCRIPTION : This file defines the MainWindow UI class.  
 */
 using System;
@@ -73,19 +73,19 @@ namespace A05
                     newConnection.ipAddress, newConnection.port);
                 if (currentConnection != null)
                 {
-                    StartConnectionCommand startUp = new StartConnectionCommand(currentConnection, currentConnection.ipAddress);
-                    string[] serverResponse = startUp.ExecuteCommand().Split(',');
-                    if (serverResponse[0] == "ACK")
+                    StartConnectionCommand startUp = new StartConnectionCommand(currentConnection, currentConnection.ipAddress); //create startconnection command
+                    string[] serverResponse = startUp.ExecuteCommand().Split(','); //get the server response back and split it
+                    if (serverResponse[0] == "ACK") //if all good
                     {
-                        isConnected = true;
+                        isConnected = true; //mark connected
                         string connectedMessage = "";
                         int tempNum = 0;
-                        int.TryParse(serverResponse[2], out tempNum);
-                        currentConnection.clientPort = tempNum;
-                        if (serverResponse[3] == "1")
+                        int.TryParse(serverResponse[2], out tempNum); //get the port number to listen on
+                        currentConnection.clientPort = tempNum; //set client port number
+                        if (serverResponse[3] == "1")//check if user is a super user 
                         {
                             connectedMessage = string.Format("Connected to server at {0} with Super User Privileges\n", currentConnection.ipAddress.ToString());
-                            SuperUserButton.IsEnabled = true;
+                            SuperUserButton.IsEnabled = true; //allow for server shutdown command
                         }
                         else
                         {
