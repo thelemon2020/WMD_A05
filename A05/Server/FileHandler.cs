@@ -105,7 +105,7 @@ namespace Server
         {
             try
             {
-                File.AppendAllText(clientLog, "port: " + port.ToString() + "In use.");
+                File.AppendAllText(clientLog, "port: " + port.ToString() + "In use.\n");
             }
             catch(IOException e)
             {
